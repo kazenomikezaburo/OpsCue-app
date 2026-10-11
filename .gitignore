@@ -43,3 +43,13 @@ next-env.d.ts
 
 # Local collaboration review artifacts
 .collab-review/
+
+# AWS CDK generated files
+.cdk-out-check/
+cdk.out/
+cdk.context.json
+
+# Nested dependency and build directories
+**/node_modules/
+**/obj/
+**/.packages/
