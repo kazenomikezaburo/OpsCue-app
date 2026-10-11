@@ -8,7 +8,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 <!-- END:nextjs-agent-rules -->
 
-# Dispatch OS Rules
+# OpsCue Rules
 
 - Stack: Next.js 16 App Router + TypeScript + Tailwind + Supabase/PostgreSQL/Auth.
 - Default to Server Components; use `"use client"` only when interaction or browser APIs require it.
@@ -19,4 +19,19 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - For UI work, consult only relevant sections of `docs/dispatch-os-ui-ux-v1.md` and `docs/dispatch-os-ui-patterns-v1.md`; do not change DB/domain/security rules.
 - Prefer the smallest scoped change; avoid unrelated refactors, file moves, dependencies, or feature additions.
 - Use Zod/server-side validation, avoid `any`, preserve existing behavior, and prevent N+1 queries.
-- Run only checks relevant to changed code plus `git diff --check`; avoid full test/build runs unless necessary. Report changed files, verification, and blockers concisely.
+- Run only checks permitted by the user and relevant to changed code; use git diff --check only within the permitted scope. Do not auto-run integration/RLS tests, DB/SQL, Docker, Auth, AWS, or migration application. These require separate explicit authorization; integration/RLS tests also require a dedicated isolated DB, safe fixtures, and a fail-closed shared executor. Report changes, actual verification, and blockers concisely.
+## Scope and migrated specifications
+
+- Prioritize the user's explicit authorization scope. Read-only tasks stay read-only; preserve unrelated uncommitted work. Do not infer GitHub sharing, migration application, account creation, or deployment approval from document edits or source migration.
+- Keep existing dispatch-os filenames and historical identifiers unchanged; use OpsCue for display names.
+- Consult relevant sections of the five STEP 211 specifications:
+  - [UI/UX guidelines](docs/dispatch-os-ui-ux-v1.md)
+  - [UI patterns](docs/dispatch-os-ui-patterns-v1.md)
+  - [Design Foundation](docs/dispatch-os-design-foundation-v1.md)
+  - [Worker Journey and Shift Timeline contract](docs/ocv1-01-worker-journey-timeline-contract.md)
+  - [Recruitment Visibility and Discovery contract](docs/ocv1-02a-recruitment-visibility-contract.md)
+- Check [migration-manifest](docs/migration-manifest.md) for migration status, missing references, and execution restrictions. Copied specifications are not proof of current implementation or runtime safety.
+- Offline safety guards and specification/model test success do not authorize live DB operations. assertIntegrationTarget returns executionAuthorized:false; never use its match result as execution permission.
+- Protect the old dispatch-os DB/543xx environment and supabase_db_dispatch-os. New expected project/ports are opscue-app-dev / API55321 / DB55322; names and ports alone do not prove identity or isolation. Fail closed when target verification is incomplete.
+- Protect the existing Manager's Auth/profile/password/branch access and DEMO-001. Do not repair, overwrite, delete, or recreate them without separate explicit authorization.
+- Do not read or expose secret values from .env.local or credentials unless explicitly authorized for a necessary operation; never publish secrets in code, logs, GitHub, or command arguments. Keep existing RLS, authorization, and minimal-change rules intact.
