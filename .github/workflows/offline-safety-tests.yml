@@ -1,0 +1,173 @@
+name: Offline safety tests
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+
+jobs:
+  test-availability:
+    name: Require offline sources (bootstrap is not a test PASS)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Checkout PR merge commit
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+          fetch-depth: 1
+      - name: Require the fixed offline dependency set
+        shell: bash
+        run: |
+          set -euo pipefail
+          printf 'Inspected commit: %s\n' "$(git rev-parse HEAD)"
+          required=(
+            scripts/safety/assert-local-target.mjs
+            scripts/safety/assert-local-target.test.mjs
+            scripts/safety/assert-integration-target.mjs
+            scripts/safety/assert-integration-target.test.mjs
+            scripts/safety/verify-local-account-target.mjs
+            scripts/safety/verify-local-account-target.test.mjs
+            scripts/dev/local-account-plan.mjs
+            scripts/dev/local-account-plan.test.mjs
+            scripts/dev/prepare-local-accounts.mjs
+          )
+          missing=false
+          for file in "${required[@]}"; do
+            if [[ -L "$file" || ! -f "$file" ]]; then
+              missing=true
+              printf '::error::Missing or linked offline source: %s\n' "$file"
+            fi
+          done
+          if [[ "$missing" == true ]]; then
+            printf 'Offline tests: **NOT RUN / FAIL**. Required sources are absent or linked. Bootstrap does not waive this check; this is not 173/173 PASS.\n' >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
+
+  offline-safety-tests:
+    name: Run offline tests / Node 22.23.3
+    needs: test-availability
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    outputs:
+      validated: ${{ steps.tests.outputs.validated }}
+    steps:
+      - name: Checkout PR merge commit
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+          fetch-depth: 1
+      - name: Set up Node 22.23.3 without dependency caching
+        uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6.0.0
+        with:
+          node-version: '22.23.3'
+          check-latest: false
+          package-manager-cache: false
+      - name: Run four tests and validate the complete TAP result
+        id: tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          printf 'Tested commit: %s\n' "$(git rev-parse HEAD)"
+          approved_node="$(command -v node)"
+          node_version="$(env -i PATH="$PATH" TMPDIR="$RUNNER_TEMP" "$approved_node" --version)"
+          printf 'Node version: %s\n' "$node_version"
+          if [[ "$node_version" != v22.23.3 ]]; then
+            printf '::error::Expected Node v22.23.3. No tests were run.\n'
+            exit 1
+          fi
+          report="$(mktemp "$RUNNER_TEMP/offline-tests.XXXXXX.tap")"
+          diagnostics="$(mktemp "$RUNNER_TEMP/offline-tests.XXXXXX.stderr")"
+          set +e
+          timeout --signal=TERM --kill-after=5s 120s \
+            env -i PATH="$PATH" TMPDIR="$RUNNER_TEMP" "$approved_node" \
+            --test --test-reporter=tap \
+            scripts/safety/assert-local-target.test.mjs \
+            scripts/safety/assert-integration-target.test.mjs \
+            scripts/safety/verify-local-account-target.test.mjs \
+            scripts/dev/local-account-plan.test.mjs > "$report" 2> "$diagnostics"
+          test_exit_code=$?
+          set -e
+          # No pipeline: retain the actual test/timeout process exit code.
+          printf 'Test process exit code: %s\n' "$test_exit_code"
+          # Treat test output as data, never as GitHub workflow commands.
+          log_token="$(od -An -N16 -tx1 /dev/urandom | tr -d ' \n')"
+          printf '::stop-commands::%s\n' "$log_token"
+          cat "$report" "$diagnostics"
+          printf '\n::%s::\n' "$log_token"
+          python3 -I -B - "$report" "$test_exit_code" <<'PY'
+          import pathlib
+          import re
+          import sys
+
+          def refuse():
+              raise SystemExit("Offline TAP validation FAILED; no PASS output issued.")
+
+          if sys.argv[2] != "0":
+              refuse()
+          path = pathlib.Path(sys.argv[1])
+          if not path.is_file() or not 0 < path.stat().st_size <= 8 * 1024 * 1024:
+              refuse()
+          try:
+              report = path.read_text(encoding="utf-8")
+          except (OSError, UnicodeError):
+              refuse()
+          lines = report.splitlines()
+          if not lines or lines[0] != "TAP version 13" or len(lines) < 9:
+              refuse()
+          footer = "\n".join(lines[-9:])
+          expected = (
+              r"1\.\.173\n"
+              r"# tests 173\n"
+              r"# suites 0\n"
+              r"# pass 173\n"
+              r"# fail 0\n"
+              r"# cancelled 0\n"
+              r"# skipped 0\n"
+              r"# todo 0\n"
+              r"# duration_ms [0-9]+(?:\.[0-9]+)?"
+          )
+          if re.fullmatch(expected, footer) is None:
+              refuse()
+          # Require all 173 top-level results, not merely a matching footer.
+          results = [
+              re.fullmatch(r"ok ([1-9][0-9]*) - .+", line)
+              for line in lines
+              if re.match(r"(?:ok|not ok)\b", line)
+          ]
+          if len(results) != 173 or any(match is None for match in results):
+              refuse()
+          if [int(match.group(1)) for match in results] != list(range(1, 174)):
+              refuse()
+          if re.search(r"(?im)^\s*(?:ok|not ok)\b.*#\s*(?:SKIP|TODO)\b", report):
+              refuse()
+          print("Validated: 173/173 PASS; exit 0; fail/skip/cancelled/todo 0; complete TAP.")
+          PY
+          # Publish evidence only after exit-code and TAP validation succeed.
+          printf 'validated=true\n' >> "$GITHUB_OUTPUT"
+          printf 'Offline tests: **173/173 PASS**, exit 0, fail/skip/cancelled/todo 0.\n' >> "$GITHUB_STEP_SUMMARY"
+
+  offline-safety-gate:
+    name: Offline safety gate
+    needs: [test-availability, offline-safety-tests]
+    if: ${{ always() }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Require executed and validated tests
+        env:
+          AVAILABILITY_RESULT: ${{ needs.test-availability.result }}
+          TEST_RESULT: ${{ needs.offline-safety-tests.result }}
+          VALIDATED: ${{ needs.offline-safety-tests.outputs.validated }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "$AVAILABILITY_RESULT" != success || "$TEST_RESULT" != success || "$VALIDATED" != true ]]; then
+            printf '::error::Offline safety gate FAILED: tests were not successfully executed and validated.\n'
+            printf 'Offline safety gate: **FAIL**. Missing sources, bootstrap NOT RUN, failure, cancellation or skip never counts as PASS.\n' >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
+          printf 'Offline safety gate: **PASS**. The test job executed and validated 173/173 PASS.\n' >> "$GITHUB_STEP_SUMMARY"
