@@ -1,7 +1,7 @@
 /** URL syntax policy only; does not establish DB identity or safe execution. */
 export const LOCAL_TARGET_POLICY = Object.freeze({
-  api: Object.freeze({ protocol: 'http:', port: '54321', path: '/' }),
-  database: Object.freeze({ protocol: 'postgresql:', port: '54322', path: '/postgres' }),
+  api: Object.freeze({ protocol: 'http:', port: '55321', path: '/' }),
+  database: Object.freeze({ protocol: 'postgresql:', port: '55322', path: '/postgres' }),
 });
 
 const reasons = Object.freeze({
@@ -27,14 +27,14 @@ export class LocalTargetError extends Error {
 const reject = (code) => { throw new LocalTargetError(code); };
 
 /**
- * API: http://127.0.0.1:54321[/] or http://[::1]:54321[/], no credentials.
- * DB: postgresql://[user[:password]@]127.0.0.1:54322/postgres (or [::1]).
+ * API: http://127.0.0.1:55321[/] or http://[::1]:55321[/], no credentials.
+ * DB: postgresql://[user[:password]@]127.0.0.1:55322/postgres (or [::1]).
  * DB credentials use literal ASCII unreserved characters only; never returned.
  * Reject localhost, encodings, normalization aliases and unknown target kinds.
  * No DNS, environment, filesystem, process or network operations are performed.
  */
 export function assertLocalTarget(input, kind) {
-  if (!Object.hasOwn(LOCAL_TARGET_POLICY, kind)) reject('KIND');
+  if (typeof kind !== 'string' || (kind !== 'api' && kind !== 'database')) reject('KIND');
   const policy = LOCAL_TARGET_POLICY[kind];
   if (typeof input !== 'string' || input.length === 0 || /[^\x21-\x7e]/.test(input)) reject('INPUT');
   if (/[\\%]/.test(input)) reject('SYNTAX');
