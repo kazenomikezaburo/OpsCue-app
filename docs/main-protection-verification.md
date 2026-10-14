@@ -1,0 +1,2 @@
+検証目的：Protect main RulesetのPR保護動作を確認する。
+実施日：2026-10-14
