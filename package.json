@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "build:line-dispatcher": "node scripts/build-line-dispatcher.mjs",
     "start": "next start",
     "lint": "eslint app components lib proxy.ts next.config.ts",
     "lint:web": "eslint app components lib proxy.ts next.config.ts",
