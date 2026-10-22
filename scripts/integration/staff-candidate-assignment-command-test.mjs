@@ -193,7 +193,7 @@ try {
   pass("expired Qualification is re-evaluated", expired.outcome === "not_eligible" && expired.blockingReasons.some((reason) => reason.code === "qualification_expired"));
   pass("revoked Qualification is re-evaluated", revoked.outcome === "not_eligible" && revoked.blockingReasons.some((reason) => reason.code === "qualification_revoked"));
 
-  pass("legacy Application command remains present and callable by authenticated", scalar(`select (to_regprocedure('public.create_assignment_from_application(uuid,uuid)') is not null)::text||'|'||has_function_privilege('authenticated','public.create_assignment_from_application(uuid,uuid)','execute')::text;`) === "true|true");
+  pass("legacy Application command is kept for rollback but closed to authenticated", scalar(`select (to_regprocedure('public.create_assignment_from_application(uuid,uuid)') is not null)::text||'|'||has_function_privilege('authenticated','public.create_assignment_from_application(uuid,uuid)','execute')::text;`) === "true|false");
 
   cleanup();
   pass("STAFF-2G.2 fixtures are fully cleaned", scalar(`select (select count(*) from private.candidate_assignment_command_receipts where shift_id::text like 'f4000000-0000-0000-0000-%') + (select count(*) from public.assignments where shift_slot_id::text like 'f4000000-0000-0000-0000-%') + (select count(*) from public.shift_slots where id::text like 'f4000000-0000-0000-0000-%') + (select count(*) from public.workers where id::text like 'f4100000-0000-0000-0000-%');`) === "0");
