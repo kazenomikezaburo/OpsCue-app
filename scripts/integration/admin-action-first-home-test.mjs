@@ -24,7 +24,7 @@ ok(summary.includes("attention.urgent"), "Home SOS count uses the canonical Atte
 const base = { shiftId:"shift", projectId:"project", projectName:"案件", workplaceName:"現場", startsAt:"2099-01-02T00:00:00.000Z" };
 const data = buildAttentionData({
   staffing:[{...base,jobName:"受付",requiredWorkers:2,assignedWorkers:1,staffingState:"shortage"}],
-  placement:[],preConfirmations:[],dayOf:[],
+  placement:[],preConfirmations:[],journeys:[],dayOf:[],
   incidents:[{...base,incidentId:"incident",assignmentId:"assignment",workerName:"田中",createdAt:"2099-01-01T23:00:00.000Z",state:"open"}],
   attendanceReviews:[],
 },{from:"2099-01-01T15:00:00.000Z",to:"2099-01-09T15:00:00.000Z"});
