@@ -39,8 +39,11 @@ export function ApplicationActionButtons({
   // One key per decision. It is kept while the result is uncertain or while a
   // warning confirmation is pending, so the retry is idempotent.
   const keys = useRef<{ accept: string | null; reject: string | null }>({ accept: null, reject: null });
+  // Fingerprint of the warnings currently shown. Confirming sends it back, so
+  // the server accepts only if the warnings are still the same.
+  const warningsFingerprint = useRef<string | null>(null);
 
-  const run = (decision: "accept" | "reject", acknowledgeWarnings = false) => {
+  const run = (decision: "accept" | "reject", confirmWarnings = false) => {
     if (decision === "reject" && !window.confirm(`${workerName}さんを不採用にしますか？`)) return;
     setError("");
     if (!keys.current[decision]) keys.current[decision] = crypto.randomUUID();
@@ -48,16 +51,18 @@ export function ApplicationActionButtons({
     startTransition(async () => {
       try {
         const result = decision === "accept"
-          ? await acceptShiftApplication(shiftId, applicationId, key, acknowledgeWarnings)
+          ? await acceptShiftApplication(shiftId, applicationId, key, confirmWarnings ? warningsFingerprint.current : null)
           : await rejectShiftApplication(shiftId, applicationId, key);
         if (!result.ok) {
           setError(result.message);
           setWarnings(result.warnings ?? []);
           setNeedsConfirmation(result.confirmationRequired === true);
+          warningsFingerprint.current = result.confirmationRequired ? result.warningsFingerprint ?? null : null;
           if (!result.retryable && !result.confirmationRequired) keys.current[decision] = null;
           return;
         }
         keys.current[decision] = null;
+        warningsFingerprint.current = null;
         setWarnings([]);
         setNeedsConfirmation(false);
         router.refresh();

@@ -1,4 +1,5 @@
--- P0-3 Admin review through review_shift_application (run AFTER the migration).
+-- P0-3 Admin review through review_shift_application (run AFTER both migrations:
+-- 20261024090000 and 20261024100000).
 -- All checks must be true. One transaction, rolled back. ASCII only.
 
 begin;
@@ -96,7 +97,7 @@ select 'warning: overlap with own Assignment needs confirmation', ((:'w1'::jsonb
 reset role;
 select 'warning: nothing changed before confirmation', (status = 'applied')::text from public.shift_applications where id = 'f5900000-0000-0000-0000-000000000094';
 set local role authenticated;
-select public.review_shift_application('f5a00000-0000-0000-0000-000000000001', 'f5900000-0000-0000-0000-000000000094', 'accepted', 'f5700000-0000-0000-0000-000000000007', true) as w2 \gset
+select public.review_shift_application('f5a00000-0000-0000-0000-000000000001', 'f5900000-0000-0000-0000-000000000094', 'accepted', 'f5700000-0000-0000-0000-000000000007', :'w1'::jsonb ->> 'warningsFingerprint') as w2 \gset
 select 'warning: same key with confirmation accepts', ((:'w2'::jsonb ->> 'outcome') = 'accepted' and jsonb_array_length(:'w2'::jsonb -> 'warnings') = 1)::text;
 select 'warning: overlap with own accepted Application needs confirmation', (public.review_shift_application('f5a00000-0000-0000-0000-000000000002', 'f5900000-0000-0000-0000-000000000095', 'accepted', 'f5700000-0000-0000-0000-000000000008') -> 'warnings' -> 0 ->> 'code' = 'OVERLAPS_OWN_ACCEPTED_APPLICATION')::text;
 select 'warning: adjacent Shift has no warning', (public.review_shift_application('f5a00000-0000-0000-0000-000000000004', 'f5900000-0000-0000-0000-000000000097', 'accepted', 'f5700000-0000-0000-0000-000000000009') ->> 'outcome' = 'accepted')::text;
@@ -126,9 +127,9 @@ select 'state: blocked and unauthorized calls changed nothing', (status = 'appli
 select 'privilege: authenticated cannot UPDATE shift_applications', (not has_table_privilege('authenticated', 'public.shift_applications', 'UPDATE'))::text;
 select 'privilege: authenticated cannot INSERT shift_applications', (not has_table_privilege('authenticated', 'public.shift_applications', 'INSERT'))::text;
 select 'privilege: no UPDATE policies on shift_applications', (count(*) = 0)::text from pg_policies where schemaname = 'public' and tablename = 'shift_applications' and cmd in ('UPDATE', 'ALL');
-select 'privilege: authenticated can execute review command', has_function_privilege('authenticated', 'public.review_shift_application(uuid,uuid,text,uuid,boolean)', 'EXECUTE')::text;
-select 'privilege: anon cannot execute review command', (not has_function_privilege('anon', 'public.review_shift_application(uuid,uuid,text,uuid,boolean)', 'EXECUTE'))::text;
-select 'privilege: service_role cannot execute review command', (not has_function_privilege('service_role', 'public.review_shift_application(uuid,uuid,text,uuid,boolean)', 'EXECUTE'))::text;
+select 'privilege: authenticated can execute review command', has_function_privilege('authenticated', 'public.review_shift_application(uuid,uuid,text,uuid,text)', 'EXECUTE')::text;
+select 'privilege: anon cannot execute review command', (not has_function_privilege('anon', 'public.review_shift_application(uuid,uuid,text,uuid,text)', 'EXECUTE'))::text;
+select 'privilege: service_role cannot execute review command', (not has_function_privilege('service_role', 'public.review_shift_application(uuid,uuid,text,uuid,text)', 'EXECUTE'))::text;
 select 'privilege: receipts not readable by authenticated', (not has_table_privilege('authenticated', 'private.application_review_receipts', 'SELECT'))::text;
 
 rollback;

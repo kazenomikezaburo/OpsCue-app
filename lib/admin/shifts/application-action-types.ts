@@ -13,4 +13,9 @@ export type ApplicationActionResult =
       retryable?: boolean;
       confirmationRequired?: boolean;
       warnings?: ApplicationReviewWarning[];
+      // Fingerprint of the warning set shown to the Admin. Sent back with the
+      // same idempotency key to confirm exactly these warnings.
+      warningsFingerprint?: string;
+      // True when the warnings changed after the Admin confirmed them.
+      warningsChanged?: boolean;
     };
