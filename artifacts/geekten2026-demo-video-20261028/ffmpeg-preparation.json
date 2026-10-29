@@ -1,0 +1,68 @@
+{
+  "dateJST": "2026-10-28",
+  "playwrightVersion": "1.62.1",
+  "ffmpegRevision": "1011",
+  "ffmpegVersion": "ffmpeg version n7.0.1-playwright-build-1011 Copyright (c) 2000-2024 the FFmpeg developers",
+  "sourceURL": "https://cdn.playwright.dev/dbazure/download/playwright/builds/ffmpeg/1011/ffmpeg-win64.zip",
+  "method": "Unmodified bundled Playwright registry.install([findExecutable(\"ffmpeg\")], {gc:false}); isolated PLAYWRIGHT_BROWSERS_PATH; existing CLI dry run would also download Winldd, so CLI install was not executed.",
+  "binaryPath": "C:\\Users\\user\\OpsCue\\OpsCue-team-main\\artifacts\\geekten2026-demo-video-20261028\\playwright-cache\\ffmpeg-1011\\ffmpeg-win64.exe",
+  "binarySha256": "5b8f3f59ba61685828939ff3c833109748adbdea2fff4b4ae570c9fc0fc1ff4d",
+  "binaryBytes": 3490816,
+  "files": [
+    {
+      "name": "COPYING.LGPLv2.1",
+      "bytes": 26526,
+      "sha256": "b634ab5640e258563c536e658cad87080553df6f34f62269a21d554844e58bfe"
+    },
+    {
+      "name": "ffmpeg-win64.exe",
+      "bytes": 3490816,
+      "sha256": "5b8f3f59ba61685828939ff3c833109748adbdea2fff4b4ae570c9fc0fc1ff4d"
+    },
+    {
+      "name": "INSTALLATION_COMPLETE",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "referenceCheck": "Existing Playwright executablePathOrDie(\"javascript\") resolves this binary; ffmpeg -version exit code 0.",
+  "recordingTest": "NOT_RUN",
+  "mp4": "Not supported by this minimal recording build; no conversion tools acquired.",
+  "integrityBoundary": "Official HTTPS downloader completed and installation marker exists. Local SHA-256 recorded; no independent published checksum or signature was obtained.",
+  "publicAudit": {
+    "origin": "https://ops-cue-geekten-demo.vercel.app",
+    "requests": [
+      {
+        "path": "/admin/",
+        "status": 200,
+        "bytes": 35422,
+        "sha256": "b51d5f74ffe1353ad396722df68da502590fc4669f329aeb37112c1dab96d1c9",
+        "contentType": "text/html; charset=utf-8",
+        "csp": null,
+        "matches": {
+          "out": false,
+          "vercelStatic": false
+        }
+      }
+    ],
+    "pages": {},
+    "assets": [],
+    "failures": [
+      "Published HTML differs from both local outputs: /admin/"
+    ],
+    "claim": "Static GET comparison only; no browser execution or recording.",
+    "status": "BLOCKED"
+  },
+  "localAdminOutputs": {
+    "out": {
+      "exists": true,
+      "sha256": "d45624f0ca128a317112da270500da26a9f009d4b7b8791e995e7706d1cbe549",
+      "bytes": 35422
+    },
+    "vercelStatic": {
+      "exists": true,
+      "sha256": "d45624f0ca128a317112da270500da26a9f009d4b7b8791e995e7706d1cbe549",
+      "bytes": 35422
+    }
+  }
+}

@@ -1,0 +1,119 @@
+{
+  "slides": [
+    {
+      "title": "OpsCue｜募集から、現場が無事に終わるまで。",
+      "slot": 15,
+      "speech": 14,
+      "script": "「明日の集合場所、どこだっけ。」私自身、現場スタッフとして、必要な情報を探し直す不便さを感じていました。その経験から生まれたのが、OpsCueです。",
+      "cue": "冒頭の問いの後に短く間を取る。0:15までに次へ。",
+      "sources": [
+        "C:/Users/user/OpsCue/OpsCue-team-main/docs/ui_仕様書/OpsCue_Master_Specification_v1.3_2026-10-23.md",
+        "C:/Users/user/Pictures/95fd3106-53b5-4d06-b849-cbea5271f02c.png"
+      ],
+      "criteria": "作品の価値：現場体験から生まれた動機",
+      "note": "表紙の端末画像は提供されたコンセプトビジュアル。実装・動作確認の証拠ではない。"
+    },
+    {
+      "title": "勤務前に、情報を探し直していた",
+      "slot": 25,
+      "speech": 23,
+      "script": "集合案内はLINE、注意事項は別の資料。勤務前に、いくつもの場所を探していました。管理者の方からも、前日や当日朝の連絡を分かりやすくしたい、という声がありました。同じ勤務を支えるのに、スタッフも管理者も、確認に手間がかかっている。これが開発の出発点です。",
+      "cue": "最初の30秒以内に「情報が分散している不便」を伝える。0:40までに次へ。",
+      "sources": [
+        "C:/Users/user/OpsCue/OpsCue-team-main/docs/ui_仕様書/OpsCue_Master_Specification_v1.3_2026-10-23.md"
+      ],
+      "criteria": "作品の価値：当事者の課題と双方の負担",
+      "note": "Master Specification A.1/A.2。現場経験・会話に基づく課題仮説。正式な導入依頼・導入決定・定量効果を示さない。"
+    },
+    {
+      "title": "一つの勤務に、情報と行動をまとめる",
+      "slot": 30,
+      "speech": 28,
+      "script": "OpsCueは、募集から勤務完了までの情報を、一つの勤務を軸につなぐサービスです。スタッフには、次の勤務と、今やること。管理者には、確認が必要な人や現場を示します。こだわったのは、両者がそれぞれの立場で、次の行動を判断できることです。連絡を集めるだけでなく、現場で動くための入口をそろえます。",
+      "cue": "上の業務フローから、下のWorker/Adminへ視線を移す。1:10までに次へ。",
+      "sources": [
+        "C:/Users/user/OpsCue/OpsCue-team-main/docs/ui_仕様書/OpsCue_Master_Specification_v1.3_2026-10-23.md"
+      ],
+      "criteria": "作品の価値：一つの勤務を軸に役割別の行動を支える設計",
+      "note": "図は目指す業務フロー。全工程の実装・連携・動作検証済みを示す図ではない。"
+    },
+    {
+      "title": "スタッフは準備を、管理者は未確認を把握",
+      "slot": 35,
+      "speech": 33,
+      "script": "こちらは、テストデータを使った保存画面です。左はスタッフ向け。次の勤務の日時と勤務先を確認し、詳細へ進む入口があります。右は管理者向け。前日確認の回答が、まだ提出されていないことを表示しています。スタッフは、自分の準備を確認する。管理者は、連絡が必要な人を確認する。それぞれの立場で必要な情報を見せています。二つの画面は、別の勤務の表示例です。",
+      "cue": "左の日時・勤務先、右の未提出表示を順に指す。画像の同期・状態更新を演じない。1:45までに次へ。",
+      "sources": [
+        "C:/Users/user/OpsCue/OpsCue-team-main/docs/ui-screenshots/worker/home.png",
+        "C:/Users/user/OpsCue/OpsCue-team-main/docs/ui-screenshots/admin/shifts-pre-shift-detail.png",
+        "C:/Users/user/OpsCue/OpsCue-team-main/docs/ui-screenshots/README.md"
+      ],
+      "criteria": "完成度：保存済み実画面と役割別の情報設計",
+      "note": "2026-10-20のテストデータによる保存画面。WorkerはTEST Worker A、AdminはTEST Worker Bの別勤務。現在の動作確認や同一勤務の同期を示さない。原画像からネイティブ画像トリミングのみ。"
+    },
+    {
+      "title": "通信が途切れたときの応募処理",
+      "slot": 35,
+      "speech": 33,
+      "script": "応募したあと、通信が切れて結果が分からなくなったら。同じ受付キーで再試行し、保存済みの結果を確認します。同じ応募を重複登録しない、冪等性という考え方です。単一応募には、この設計とソース実装があります。ただし、実環境での復旧動作は未検証です。別の挑戦として、同じ案件の一から十シフトを、全件成功か、新規登録ゼロにする一括応募を設計中です。",
+      "cue": "左の4段階を上から下へ示す。右の「未検証」「設計中」を説明と合わせる。2:20までに次へ。",
+      "sources": [
+        "C:/Users/user/OpsCue/OpsCue-team-main/app/actions/worker-shift-applications.ts",
+        "C:/Users/user/OpsCue/OpsCue-team-main/components/worker/recruitment/worker-recruitment-application-controls.tsx",
+        "C:/Users/user/OpsCue/OpsCue-team-main/supabase/migrations/20260926175812_ocv1_worker_application_commands.sql",
+        "C:/Users/user/OpsCue/OpsCue-team-main/docs/ui_仕様書/OpsCue_Backend_%E9%96%8B%E7%99%BA%E6%89%8B%E9%A0%86%E6%9B%B8_20261023_%E6%94%B9%E8%A8%82%E7%89%88.md"
+      ],
+      "criteria": "技術レベル：結果不明・同一キー再試行・冪等性と一括処理の原子性",
+      "note": "単一応募のコードはunknownを返し、retryable時にコンポーネント内のキーを保持する。SQLは要求内容を検査し、同じactor/keyの保存結果を返す。成功・キー保持の実環境検証は未実施。画面再読込や再ログインをまたぐキー永続化を保証しない。応募受付は採用・配置確定と別。一括応募の1〜10件、原子性、結果照会は設計段階。"
+    },
+    {
+      "title": "勤務詳細で、集合と準備を確認",
+      "slot": 25,
+      "speech": 23,
+      "script": "勤務詳細を、保存した画面で紹介します。集合・準備の欄に勤務先と集合時刻、その下に前日確認の状態があります。ここでは同じ画面の二か所を拡大しています。勤務前に見直したい情報を、一か所で確認できる構成です。現在の動作を示すライブデモではなく、テストデータによる保存画面の紹介です。",
+      "cue": "左は集合・準備、右は前日確認。同一画像の切り出しであり操作前後ではない。クリック・スクロール不要。2:45までに次へ。",
+      "sources": [
+        "C:/Users/user/OpsCue/OpsCue-team-main/docs/ui-screenshots/worker/assignments-detail.png",
+        "C:/Users/user/OpsCue/OpsCue-team-main/docs/ui-screenshots/README.md"
+      ],
+      "criteria": "完成度：勤務前の確認に必要なUIを大きく提示",
+      "note": "静止画デモ。2026-10-20時点のテストデータ。左右は同一保存画像の別領域で、遷移や更新の実行証拠ではない。映像は使用しない。"
+    },
+    {
+      "title": "現場で働く人に、次の一手を",
+      "slot": 15,
+      "speech": 14,
+      "script": "今後は一括応募の検証と、現場の声をもとにした改善を進めます。現場で働く人に、次の一手を。OpsCue。募集から、現場が無事に終わるまで。",
+      "cue": "最後のキャッチコピーの前に短く間を取る。3:00までに終了。",
+      "sources": [
+        "C:/Users/user/OpsCue/OpsCue-team-main/docs/ui_仕様書/OpsCue_Master_Specification_v1.3_2026-10-23.md",
+        "C:/Users/user/OpsCue/OpsCue-team-main/docs/ui_仕様書/OpsCue_Backend_%E9%96%8B%E7%99%BA%E6%89%8B%E9%A0%86%E6%9B%B8_20261023_%E6%94%B9%E8%A8%82%E7%89%88.md"
+      ],
+      "criteria": "作品の価値：可能性／技術レベル：次の検証課題",
+      "note": "今後の提案・展望。導入実績や現場検証済みの効果は主張しない。"
+    }
+  ],
+  "src": {
+    "key": "C:/Users/user/Pictures/95fd3106-53b5-4d06-b849-cbea5271f02c.png",
+    "worker": "C:/Users/user/OpsCue/OpsCue-team-main/docs/ui-screenshots/worker/home.png",
+    "admin": "C:/Users/user/OpsCue/OpsCue-team-main/docs/ui-screenshots/admin/shifts-pre-shift-detail.png",
+    "detail": "C:/Users/user/OpsCue/OpsCue-team-main/docs/ui-screenshots/worker/assignments-detail.png",
+    "master": "C:/Users/user/OpsCue/OpsCue-team-main/docs/ui_仕様書/OpsCue_Master_Specification_v1.3_2026-10-23.md",
+    "backend": "C:/Users/user/OpsCue/OpsCue-team-main/docs/ui_仕様書/OpsCue_Backend_%E9%96%8B%E7%99%BA%E6%89%8B%E9%A0%86%E6%9B%B8_20261023_%E6%94%B9%E8%A8%82%E7%89%88.md",
+    "catalog": "C:/Users/user/OpsCue/OpsCue-team-main/docs/ui-screenshots/README.md",
+    "action": "C:/Users/user/OpsCue/OpsCue-team-main/app/actions/worker-shift-applications.ts",
+    "control": "C:/Users/user/OpsCue/OpsCue-team-main/components/worker/recruitment/worker-recruitment-application-controls.tsx",
+    "sql": "C:/Users/user/OpsCue/OpsCue-team-main/supabase/migrations/20260926175812_ocv1_worker_application_commands.sql"
+  },
+  "font": "Noto Sans JP",
+  "colors": {
+    "navy": "#071D3B",
+    "blue": "#0865EF",
+    "cyan": "#42C7FF",
+    "ink": "#11253F",
+    "muted": "#50647A",
+    "pale": "#EFF5FF",
+    "white": "#FFFFFF",
+    "rule": "#C9DAEC"
+  }
+}

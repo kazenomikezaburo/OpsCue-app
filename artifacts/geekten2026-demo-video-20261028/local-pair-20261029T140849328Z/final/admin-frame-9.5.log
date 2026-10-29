@@ -1,0 +1,25 @@
+
+[libvpx @ 000001f381917d80] v1.14.1
+Input #0, matroska,webm, from 'C:\Users\user\OpsCue\OpsCue-team-main\artifacts\geekten2026-demo-video-20261028\local-pair-20261029T140849328Z\final\OpsCue_Admin_Local_Desktop.webm':
+  Metadata:
+    ENCODER         : Lavf61.1.100
+  Duration: 00:00:15.00, start: 0.000000, bitrate: 1093 kb/s
+  Stream #0:0(eng): Video: vp8 (libvpx), yuv420p(tv, progressive), 1280x832, SAR 1:1 DAR 20:13, 25 fps, 25 tbr, 1k tbn (default)
+      Metadata:
+        ENCODER         : Lavc61.3.100 libvpx
+        DURATION        : 00:00:15.000000000
+[libvpx @ 000001f383424f80] v1.14.1
+Stream mapping:
+  Stream #0:0 -> #0:0 (vp8 (libvpx) -> png (native))
+Press [q] to stop, [?] for help
+Output #0, image2, to 'C:\Users\user\OpsCue\OpsCue-team-main\artifacts\geekten2026-demo-video-20261028\local-pair-20261029T140849328Z\final\admin-frame-9.5.png':
+  Metadata:
+    encoder         : Lavf61.1.100
+  Stream #0:0(eng): Video: png, rgb24(pc, gbr/unknown/unknown, progressive), 1280x832 [SAR 1:1 DAR 20:13], q=2-31, 200 kb/s, 25 fps, 25 tbn (default)
+      Metadata:
+        DURATION        : 00:00:15.000000000
+        encoder         : Lavc61.3.100 png
+[image2 @ 000001f383f71680] The specified filename 'C:\Users\user\OpsCue\OpsCue-team-main\artifacts\geekten2026-demo-video-20261028\local-pair-20261029T140849328Z\final\admin-frame-9.5.png' does not contain an image sequence pattern or a pattern is invalid.
+[image2 @ 000001f383f71680] Use a pattern such as %03d for an image sequence or use the -update option (with -frames:v 1 if needed) to write a single image.
+[out#0/image2 @ 000001f381917f40] video:195KiB audio:0KiB subtitle:0KiB other streams:0KiB global headers:0KiB muxing overhead: unknown
+frame=    1 fps=0.0 q=-0.0 Lsize=N/A time=00:00:00.08 bitrate=N/A speed=2.08x    

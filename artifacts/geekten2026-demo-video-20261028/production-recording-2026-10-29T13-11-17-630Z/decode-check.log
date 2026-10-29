@@ -1,0 +1,27 @@
+
+[libvpx @ 000001e3b0249680] v1.14.1
+Input #0, matroska,webm, from 'C:\Users\user\OpsCue\OpsCue-team-main\artifacts\geekten2026-demo-video-20261028\production-recording-2026-10-29T13-11-17-630Z\OpsCue_Worker_Demo.webm':
+  Metadata:
+    ENCODER         : Lavf61.1.100
+  Duration: 00:00:18.00, start: 0.000000, bitrate: 872 kb/s
+  Stream #0:0(eng): Video: vp8 (libvpx), yuv420p(tv, progressive), 1280x720, SAR 1:1 DAR 16:9, 25 fps, 25 tbr, 1k tbn (default)
+      Metadata:
+        ENCODER         : Lavc61.3.100 libvpx
+        DURATION        : 00:00:18.000000000
+[libvpx @ 000001e3b2721640] v1.14.1
+Stream mapping:
+  Stream #0:0 -> #0:0 (vp8 (libvpx) -> vp8 (libvpx))
+Press [q] to stop, [?] for help
+[libvpx @ 000001e3b271f500] v1.14.1
+[libvpx @ 000001e3b271f500] Neither bitrate nor constrained quality specified, using default CRF of 32 and bitrate of 256kbit/sec
+Output #0, webm, to 'C:\Users\user\OpsCue\OpsCue-team-main\artifacts\geekten2026-demo-video-20261028\production-recording-2026-10-29T13-11-17-630Z\decode-check.webm':
+  Metadata:
+    encoder         : Lavf61.1.100
+  Stream #0:0(eng): Video: vp8, yuv420p(tv, progressive), 1280x720 [SAR 1:1 DAR 16:9], q=2-31, 256 kb/s, 25 fps, 1k tbn (default)
+      Metadata:
+        DURATION        : 00:00:18.000000000
+        encoder         : Lavc61.3.100 libvpx
+      Side data:
+        cpb: bitrate max/min/avg: 0/0/0 buffer size: 0 vbv_delay: N/A
+frame=   15 fps=0.0 q=32.0 size=       0KiB time=00:00:00.60 bitrate=   6.3kbits/s speed=1.18x    frame=   30 fps= 30 q=12.0 size=       0KiB time=00:00:01.20 bitrate=   3.2kbits/s speed=1.19x    frame=   45 fps= 30 q=32.0 size=       0KiB time=00:00:01.80 bitrate=   2.1kbits/s speed=1.18x    frame=   86 fps= 43 q=32.0 size=       0KiB time=00:00:03.44 bitrate=   1.1kbits/s speed= 1.7x    frame=  121 fps= 48 q=62.0 size=      88KiB time=00:00:04.84 bitrate= 148.8kbits/s speed=1.92x    frame=  148 fps= 49 q=57.0 size=     109KiB time=00:00:05.92 bitrate= 151.3kbits/s speed=1.95x    frame=  165 fps= 47 q=55.0 size=     109KiB time=00:00:06.60 bitrate= 135.7kbits/s speed=1.86x    frame=  220 fps= 54 q=46.0 size=     109KiB time=00:00:08.80 bitrate= 101.8kbits/s speed=2.17x    frame=  288 fps= 63 q=46.0 size=     228KiB time=00:00:11.52 bitrate= 162.1kbits/s speed=2.52x    frame=  354 fps= 70 q=46.0 size=     228KiB time=00:00:14.16 bitrate= 131.8kbits/s speed=2.79x    frame=  391 fps= 70 q=46.0 size=     256KiB time=00:00:15.64 bitrate= 134.1kbits/s speed= 2.8x    [out#0/webm @ 000001e3b024ed40] video:355KiB audio:0KiB subtitle:0KiB other streams:0KiB global headers:0KiB muxing overhead: 1.039206%
+frame=  450 fps= 74 q=46.0 Lsize=     358KiB time=00:00:18.00 bitrate= 163.1kbits/s speed=2.96x    

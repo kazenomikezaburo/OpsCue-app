@@ -1,0 +1,11 @@
+
+[libvpx @ 0000025d65829040] v1.14.1
+Input #0, matroska,webm, from 'C:\Users\user\OpsCue\OpsCue-team-main\artifacts\geekten2026-demo-video-20261028\local-pair-20261029T140849328Z\record\videos\page@87f2289deb3af31b749565f2eeeb09e7.webm':
+  Metadata:
+    ENCODER         : Lavf61.1.100
+  Duration: 00:00:16.32, start: 0.000000, bitrate: 549 kb/s
+  Stream #0:0(eng): Video: vp8 (libvpx), yuv420p(tv, progressive), 1280x832, SAR 1:1 DAR 20:13, 25 fps, 25 tbr, 1k tbn (default)
+      Metadata:
+        ENCODER         : Lavc61.3.100 libvpx
+        DURATION        : 00:00:16.320000000
+At least one output file must be specified

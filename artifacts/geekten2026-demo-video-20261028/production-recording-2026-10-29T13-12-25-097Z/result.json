@@ -1,0 +1,415 @@
+{
+  "run": "C:\\Users\\user\\OpsCue\\OpsCue-team-main\\artifacts\\geekten2026-demo-video-20261028\\production-recording-2026-10-29T13-12-25-097Z",
+  "staticOutput": "C:\\Users\\user\\OpsCue-Geekten-Demo\\site\\out",
+  "requests": [
+    {
+      "url": "http://127.0.0.1:4317/worker/",
+      "method": "GET",
+      "type": "document",
+      "allowed": true
+    },
+    {
+      "url": "http://127.0.0.1:4317/_next/static/css/5081f8f7d834aca9.css",
+      "method": "GET",
+      "type": "stylesheet",
+      "allowed": true
+    },
+    {
+      "url": "http://127.0.0.1:4317/_next/static/chunks/webpack-18d35324d4c7d747.js",
+      "method": "GET",
+      "type": "script",
+      "allowed": true
+    },
+    {
+      "url": "http://127.0.0.1:4317/_next/static/chunks/4bd1b696-c7408084347438ae.js",
+      "method": "GET",
+      "type": "script",
+      "allowed": true
+    },
+    {
+      "url": "http://127.0.0.1:4317/_next/static/chunks/794-f6a16fdde17f7dcf.js",
+      "method": "GET",
+      "type": "script",
+      "allowed": true
+    },
+    {
+      "url": "http://127.0.0.1:4317/_next/static/chunks/main-app-3c8ff4fa36e40248.js",
+      "method": "GET",
+      "type": "script",
+      "allowed": true
+    },
+    {
+      "url": "http://127.0.0.1:4317/_next/static/chunks/500-fc3b64d9ff4a32a7.js",
+      "method": "GET",
+      "type": "script",
+      "allowed": true
+    },
+    {
+      "url": "http://127.0.0.1:4317/_next/static/chunks/702-6c7dae6d175cb3b8.js",
+      "method": "GET",
+      "type": "script",
+      "allowed": true
+    },
+    {
+      "url": "http://127.0.0.1:4317/_next/static/chunks/app/layout-431f53c9a755a7f5.js",
+      "method": "GET",
+      "type": "script",
+      "allowed": true
+    },
+    {
+      "url": "http://127.0.0.1:4317/_next/static/chunks/app/page-9acf1ecab13f5ac8.js",
+      "method": "GET",
+      "type": "script",
+      "allowed": true
+    },
+    {
+      "url": "http://127.0.0.1:4317/_next/static/chunks/app/worker/layout-d977794bcc5c660d.js",
+      "method": "GET",
+      "type": "script",
+      "allowed": true
+    },
+    {
+      "url": "http://127.0.0.1:4317/_next/static/chunks/app/worker/page-e0029ff66122506b.js",
+      "method": "GET",
+      "type": "script",
+      "allowed": true
+    },
+    {
+      "url": "http://127.0.0.1:4317/",
+      "method": "HEAD",
+      "type": "fetch",
+      "allowed": true
+    },
+    {
+      "url": "http://127.0.0.1:4317/admin/",
+      "method": "HEAD",
+      "type": "fetch",
+      "allowed": true
+    },
+    {
+      "url": "http://127.0.0.1:4317/worker/",
+      "method": "HEAD",
+      "type": "fetch",
+      "allowed": true
+    },
+    {
+      "url": "http://127.0.0.1:4317/guide/",
+      "method": "HEAD",
+      "type": "fetch",
+      "allowed": true
+    },
+    {
+      "url": "http://127.0.0.1:4317/__next._tree.txt?_rsc=Tf9WmAx5UNOUpWTJ",
+      "method": "GET",
+      "type": "fetch",
+      "allowed": true
+    },
+    {
+      "url": "http://127.0.0.1:4317/admin/__next._tree.txt?_rsc=Tf9WmAx5UNOUpWTJ",
+      "method": "GET",
+      "type": "fetch",
+      "allowed": true
+    },
+    {
+      "url": "http://127.0.0.1:4317/worker/__next._tree.txt?_rsc=Tf9WmAx5UNOUpWTJ",
+      "method": "GET",
+      "type": "fetch",
+      "allowed": true
+    },
+    {
+      "url": "http://127.0.0.1:4317/guide/__next._tree.txt?_rsc=Tf9WmAx5UNOUpWTJ",
+      "method": "GET",
+      "type": "fetch",
+      "allowed": true
+    },
+    {
+      "url": "http://127.0.0.1:4317/worker/recruitment/",
+      "method": "HEAD",
+      "type": "fetch",
+      "allowed": true
+    },
+    {
+      "url": "http://127.0.0.1:4317/worker/shifts/",
+      "method": "HEAD",
+      "type": "fetch",
+      "allowed": true
+    },
+    {
+      "url": "http://127.0.0.1:4317/worker/support/",
+      "method": "HEAD",
+      "type": "fetch",
+      "allowed": true
+    },
+    {
+      "url": "http://127.0.0.1:4317/worker/mypage/",
+      "method": "HEAD",
+      "type": "fetch",
+      "allowed": true
+    },
+    {
+      "url": "http://127.0.0.1:4317/worker/recruitment/__next._tree.txt?_rsc=Tf9WmAx5UNOUpWTJ",
+      "method": "GET",
+      "type": "fetch",
+      "allowed": true
+    },
+    {
+      "url": "http://127.0.0.1:4317/worker/shifts/__next._tree.txt?_rsc=Tf9WmAx5UNOUpWTJ",
+      "method": "GET",
+      "type": "fetch",
+      "allowed": true
+    },
+    {
+      "url": "http://127.0.0.1:4317/worker/support/__next._tree.txt?_rsc=Tf9WmAx5UNOUpWTJ",
+      "method": "GET",
+      "type": "fetch",
+      "allowed": true
+    },
+    {
+      "url": "http://127.0.0.1:4317/worker/mypage/__next._tree.txt?_rsc=Tf9WmAx5UNOUpWTJ",
+      "method": "GET",
+      "type": "fetch",
+      "allowed": true
+    },
+    {
+      "url": "http://127.0.0.1:4317/worker/assignments/demo-assignment-reception-1/",
+      "method": "HEAD",
+      "type": "fetch",
+      "allowed": true
+    },
+    {
+      "url": "http://127.0.0.1:4317/worker/recruitment/demo-guide/",
+      "method": "HEAD",
+      "type": "fetch",
+      "allowed": true
+    },
+    {
+      "url": "http://127.0.0.1:4317/worker/recruitment/demo-community-shift/",
+      "method": "HEAD",
+      "type": "fetch",
+      "allowed": true
+    },
+    {
+      "url": "http://127.0.0.1:4317/__next.__PAGE__.txt?_rsc=ThQpWusij2cdmA-g",
+      "method": "GET",
+      "type": "fetch",
+      "allowed": true
+    },
+    {
+      "url": "http://127.0.0.1:4317/worker/assignments/demo-assignment-reception-1/__next._tree.txt?_rsc=Tf9WmAx5UNOUpWTJ",
+      "method": "GET",
+      "type": "fetch",
+      "allowed": true
+    },
+    {
+      "url": "http://127.0.0.1:4317/worker/recruitment/demo-guide/__next._tree.txt?_rsc=Tf9WmAx5UNOUpWTJ",
+      "method": "GET",
+      "type": "fetch",
+      "allowed": true
+    },
+    {
+      "url": "http://127.0.0.1:4317/worker/recruitment/demo-community-shift/__next._tree.txt?_rsc=Tf9WmAx5UNOUpWTJ",
+      "method": "GET",
+      "type": "fetch",
+      "allowed": true
+    },
+    {
+      "url": "http://127.0.0.1:4317/admin/__next.admin.__PAGE__.txt?_rsc=xIk3n91CkLPwy5PB",
+      "method": "GET",
+      "type": "fetch",
+      "allowed": true
+    },
+    {
+      "url": "http://127.0.0.1:4317/worker/__next.worker.__PAGE__.txt?_rsc=jU2RhlHcLlQK347U",
+      "method": "GET",
+      "type": "fetch",
+      "allowed": true
+    },
+    {
+      "url": "http://127.0.0.1:4317/guide/__next.guide.__PAGE__.txt?_rsc=g6jGZ9jrksxR_WjX",
+      "method": "GET",
+      "type": "fetch",
+      "allowed": true
+    },
+    {
+      "url": "http://127.0.0.1:4317/worker/recruitment/__next.worker.recruitment.__PAGE__.txt?_rsc=BAc-MiFbad_Wu2HV",
+      "method": "GET",
+      "type": "fetch",
+      "allowed": true
+    },
+    {
+      "url": "http://127.0.0.1:4317/_next/static/chunks/409-3be9b1bbd6fb5a89.js",
+      "method": "GET",
+      "type": "script",
+      "allowed": true
+    },
+    {
+      "url": "http://127.0.0.1:4317/_next/static/chunks/app/admin/layout-3695eed87f96b744.js",
+      "method": "GET",
+      "type": "script",
+      "allowed": true
+    },
+    {
+      "url": "http://127.0.0.1:4317/_next/static/chunks/app/admin/page-29c6667f53572c88.js",
+      "method": "GET",
+      "type": "script",
+      "allowed": true
+    },
+    {
+      "url": "http://127.0.0.1:4317/worker/shifts/__next.worker.shifts.__PAGE__.txt?_rsc=0tDnN_jvzR-SFEDg",
+      "method": "GET",
+      "type": "fetch",
+      "allowed": true
+    },
+    {
+      "url": "http://127.0.0.1:4317/worker/support/__next.worker.support.__PAGE__.txt?_rsc=LyzlOyTp-pz48bKW",
+      "method": "GET",
+      "type": "fetch",
+      "allowed": true
+    },
+    {
+      "url": "http://127.0.0.1:4317/_next/static/chunks/app/guide/page-dc6f0541a7c31e99.js",
+      "method": "GET",
+      "type": "script",
+      "allowed": true
+    },
+    {
+      "url": "http://127.0.0.1:4317/worker/mypage/__next.worker.mypage.__PAGE__.txt?_rsc=6GyUQxN-2pBObM68",
+      "method": "GET",
+      "type": "fetch",
+      "allowed": true
+    },
+    {
+      "url": "http://127.0.0.1:4317/_next/static/chunks/398-f0531e3961b5319c.js",
+      "method": "GET",
+      "type": "script",
+      "allowed": true
+    },
+    {
+      "url": "http://127.0.0.1:4317/_next/static/chunks/app/worker/recruitment/page-951b4e51de31ee19.js",
+      "method": "GET",
+      "type": "script",
+      "allowed": true
+    },
+    {
+      "url": "http://127.0.0.1:4317/worker/assignments/demo-assignment-reception-1/__next.worker.assignments.$d$assignmentId.__PAGE__.txt?_rsc=LTgfQw2tjYU9IYMx",
+      "method": "GET",
+      "type": "fetch",
+      "allowed": true
+    },
+    {
+      "url": "http://127.0.0.1:4317/_next/static/chunks/app/worker/shifts/page-0ae55684e41a991a.js",
+      "method": "GET",
+      "type": "script",
+      "allowed": true
+    },
+    {
+      "url": "http://127.0.0.1:4317/worker/recruitment/demo-guide/__next.worker.recruitment.$d$shiftId.__PAGE__.txt?_rsc=cxfrIZo_clYy-IcZ",
+      "method": "GET",
+      "type": "fetch",
+      "allowed": true
+    },
+    {
+      "url": "http://127.0.0.1:4317/_next/static/chunks/app/worker/support/page-c804a694797c1892.js",
+      "method": "GET",
+      "type": "script",
+      "allowed": true
+    },
+    {
+      "url": "http://127.0.0.1:4317/worker/recruitment/demo-community-shift/__next.worker.recruitment.$d$shiftId.__PAGE__.txt?_rsc=cxfrIZo_clYy-IcZ",
+      "method": "GET",
+      "type": "fetch",
+      "allowed": true
+    },
+    {
+      "url": "http://127.0.0.1:4317/_next/static/chunks/app/worker/mypage/page-40522d22f9596e47.js",
+      "method": "GET",
+      "type": "script",
+      "allowed": true
+    },
+    {
+      "url": "http://127.0.0.1:4317/_next/static/chunks/app/worker/assignments/%5BassignmentId%5D/page-ec93ec5162acbf44.js",
+      "method": "GET",
+      "type": "script",
+      "allowed": true
+    },
+    {
+      "url": "http://127.0.0.1:4317/_next/static/chunks/app/worker/recruitment/%5BshiftId%5D/page-803ae262ef3a417c.js",
+      "method": "GET",
+      "type": "script",
+      "allowed": true
+    }
+  ],
+  "denied": [],
+  "errors": [],
+  "started": "2026-10-29T13:12:25.283Z",
+  "listen": {
+    "address": "127.0.0.1",
+    "family": "IPv4",
+    "port": 4317
+  },
+  "home": "本文へ移動\nDEMO / 架空データのみ ／ 基準日時 2026/10/30 10:00 JST\nデモ入口\nAdmin\nWorker\nOpsCue\nホーム\n募集\n勤務\nサポート\nマイページ\n\nTEST Worker Aさん\n\nWorker\n\n架空のデモユーザー\n\nホーム\n\nホーム\n\nこんにちは、TEST Worker Aさん\n\n今日やること\n\n前日確認を行う\n\n10/31(土) 秋の展示会 受付 / 展示会受付スタッフ\n\n対応できます ・ 09:00目安\n\n前日確認を行う\n\n次の勤務\n\n10/31(土) 秋の展示会 受付\n\n09:00–17:00 ・ サンプル展示ホール\n\n未確認\n\n集合 08:45 ・ 正面入口\n\n勤務詳細を見る\n›\n募集中の仕事\nすべて見る\n›\n\n11/3(火)\n\n商業施設 案内 / 商業施設 案内\n\n10:00–18:00 ・ サンプル商業施設\n\n募集中\n\n11/7(土)\n\n地域イベント 運営 / 地域イベント 運営\n\n08:30–16:30 ・ サンプル地域広場\n\n募集中",
+  "actions": [
+    {
+      "seconds": 0,
+      "action": "Loaded Worker home, next shift visible"
+    },
+    {
+      "seconds": 5.261,
+      "action": "Clicked actual home detail link"
+    },
+    {
+      "seconds": 7.312,
+      "action": "Scrolled to work location, meeting time and job description"
+    },
+    {
+      "seconds": 13.369,
+      "action": "Scrolled to existing pre-shift confirmation state"
+    },
+    {
+      "seconds": 18.004,
+      "action": "Recording scenario finished"
+    }
+  ],
+  "actualHref": "/worker/assignments/demo-assignment-reception-1/",
+  "detailURL": "http://127.0.0.1:4317/worker/",
+  "detail": "本文へ移動\nDEMO / 架空データのみ ／ 基準日時 2026/10/30 10:00 JST\nデモ入口\nAdmin\nWorker\nOpsCue\nホーム\n募集\n勤務\nサポート\nマイページ\n\nTEST Worker Aさん\n\nWorker\n\n架空のデモユーザー\n\n勤務\n\n勤務一覧へ戻る/Workerホームへ戻る\n\n勤務詳細\n\n10/31(土)\n\n09:00〜17:00\n\nサンプル展示ホール\n\n秋の展示会 受付 / 展示会受付スタッフ\n\n集合・準備\n勤務先\nサンプル展示ホール\n架空市デモ町 展示エリア\n集合時刻\n10/31(土) 08:45\n集合案内\n正面入口\nアクセス\nサンプル会場の正面入口\n仕事内容\n来場者の受付・案内を担当する架空の展示会案件です。\n服装\n白いシャツ・黒いパンツ\n持ち物\n筆記用具、メモ帳\n食事案内\n休憩時間に各自でお取りください\n前日確認\n未確認\n\n対象勤務：2026年10/31(土) 09:00開始。前日確認の受付：10/30(金) 00:00〜勤務開始前（日本時間）。デモ基準日時は2026/10/30 10:00です。\n\n勤務日時・集合場所・持ち物を確認し、架空のWorkerが勤務可能であることをデモ内に記録します。\n\n前日確認する\n\n前日確認を行えます。\n\n勤務タイムライン\n\n予定と実際の報告を時系列で表示します。\n\n次: 前日確認を行う\n\n次に必要なAction\n\n前日確認を行う\n\n目安 10/31 09:00\n\n該当箇所を見る\n\n起床\n\n対象外\n\n出発\n\n対象外\n\n到着\n\n予定\n\n予定 10/31 08:45\n\n勤務が確定しています\n\n予定\n\n予定 10/31 09:00\n\n前日確認\n\n報告できます\n\n予定 10/31 09:00\n\n到着報告と正式な勤務開始・終了は別の記録です。\n\n勤怠\n\n勤務開始前 · 展示会受付スタッフ\nこの操作は今回のデモ対象外です。送信・記録は行いません。\n\nSOS・問い合わせ\n\n勤務に関する困りごとを確認するための表示です。\nこの操作は今回のデモ対象外です。送信・記録は行いません。\n\n条件・報酬\n休憩\n60分\n時給\n1,400円\n交通費\n上限1,000円\n応募条件\n特別な資格は不要です\n募集補足\n架空の勤務です",
+  "rawVideo": "C:\\Users\\user\\OpsCue\\OpsCue-team-main\\artifacts\\geekten2026-demo-video-20261028\\production-recording-2026-10-29T13-12-25-097Z\\videos\\page@e61726e62bd4aa807094d1fe5c866d67.webm",
+  "rawDuration": 19.28,
+  "trimStart": 1.2800000000000011,
+  "videoPath": "C:\\Users\\user\\OpsCue\\OpsCue-team-main\\artifacts\\geekten2026-demo-video-20261028\\production-recording-2026-10-29T13-12-25-097Z\\OpsCue_Worker_Demo.webm",
+  "decodeExit": 0,
+  "mediaInfo": "[libvpx @ 0000022d77c99680] v1.14.1\r\nInput #0, matroska,webm, from 'C:\\Users\\user\\OpsCue\\OpsCue-team-main\\artifacts\\geekten2026-demo-video-20261028\\production-recording-2026-10-29T13-12-25-097Z\\OpsCue_Worker_Demo.webm':\r\n  Metadata:\r\n    ENCODER         : Lavf61.1.100\r\n  Duration: 00:00:18.00, start: 0.000000, bitrate: 835 kb/s\r\n  Stream #0:0(eng): Video: vp8 (libvpx), yuv420p(tv, progressive), 1280x720, SAR 1:1 DAR 16:9, 25 fps, 25 tbr, 1k tbn (default)\r\n      Metadata:\r\n        ENCODER         : Lavc61.3.100 libvpx\r\n        DURATION        : 00:00:18.000000000\r\n[libvpx @ 0000022d7a1e1640] v1.14.1\r\nStream mapping:\r\n  Stream #0:0 -> #0:0 (vp8 (libvpx) -> vp8 (libvpx))\r\nPress [q] to stop, [?] for help\r\n[libvpx @ 0000022d7a1df500] v1.14.1\r\n[libvpx @ 0000022d7a1df500] Neither bitrate nor constrained quality specified, using default CRF of 32 and bitrate of 256kbit/sec\r\nOutput #0, webm, to 'C:\\Users\\user\\OpsCue\\OpsCue-team-main\\artifacts\\geekten2026-demo-video-20261028\\production-recording-2026-10-29T13-12-25-097Z\\decode-check.webm':\r\n  Metadata:\r\n    encoder         : Lavf61.1.100\r\n  Stream #0:0(eng): Video: vp8, yuv420p(tv, progressive), 1280x720 [SAR 1:1 DAR 16:9], q=2-31, 256 kb/s, 25 fps, 1k tbn (default)\r\n      Metadata:\r\n        DURATION        : 00:00:18.000000000\r\n        encoder         : Lavc61.3.100 libvpx\r\n      Side data:\r\n        cpb: bitrate max/min/avg: 0/0/0 buffer size: 0 vbv_delay: N/A\r\nframe=   16 fps=0.0 q=32.0 size=       0KiB time=00:00:00.64 bitrate=   5.9kbits/s speed=1.27x    \rframe=   31 fps= 30 q=32.0 size=       0KiB time=00:00:01.24 bitrate=   3.1kbits/s speed=1.22x    \rframe=   47 fps= 31 q=32.0 size=       0KiB time=00:00:01.88 bitrate=   2.0kbits/s speed=1.23x    \rframe=  103 fps= 50 q=63.0 size=      88KiB time=00:00:04.12 bitrate= 174.8kbits/s speed=2.01x    \rframe=  132 fps= 52 q=60.0 size=     109KiB time=00:00:05.28 bitrate= 169.7kbits/s speed=2.06x    \rframe=  161 fps= 52 q=54.0 size=     109KiB time=00:00:06.44 bitrate= 139.1kbits/s speed= 2.1x    \rframe=  205 fps= 57 q=46.0 size=     109KiB time=00:00:08.20 bitrate= 109.2kbits/s speed=2.29x    \rframe=  272 fps= 66 q=46.0 size=     229KiB time=00:00:10.88 bitrate= 172.1kbits/s speed=2.65x    \rframe=  338 fps= 73 q=46.0 size=     229KiB time=00:00:13.52 bitrate= 138.5kbits/s speed=2.94x    \rframe=  383 fps= 75 q=46.0 size=     256KiB time=00:00:15.32 bitrate= 136.9kbits/s speed=   3x    \rframe=  446 fps= 79 q=43.0 size=     256KiB time=00:00:17.84 bitrate= 117.6kbits/s speed=3.17x    \r[out#0/webm @ 0000022d77c9ed40] video:368KiB audio:0KiB subtitle:0KiB other streams:0KiB global headers:0KiB muxing overhead: 1.002616%\r\nframe=  450 fps= 80 q=46.0 Lsize=     371KiB time=00:00:18.00 bitrate= 169.0kbits/s speed=3.18x    \r\n",
+  "videoBytes": 1878829,
+  "videoSha256": "5dbdbfbaded26e12667b9d72bc63ea4cc091f2234c22f1c65a757c32ac136a5c",
+  "frames": [
+    {
+      "name": "start",
+      "time": 1,
+      "file": "C:\\Users\\user\\OpsCue\\OpsCue-team-main\\artifacts\\geekten2026-demo-video-20261028\\production-recording-2026-10-29T13-12-25-097Z\\frame-start.png"
+    },
+    {
+      "name": "transition-before",
+      "time": 4.8,
+      "file": "C:\\Users\\user\\OpsCue\\OpsCue-team-main\\artifacts\\geekten2026-demo-video-20261028\\production-recording-2026-10-29T13-12-25-097Z\\frame-transition-before.png"
+    },
+    {
+      "name": "transition-after",
+      "time": 6.3,
+      "file": "C:\\Users\\user\\OpsCue\\OpsCue-team-main\\artifacts\\geekten2026-demo-video-20261028\\production-recording-2026-10-29T13-12-25-097Z\\frame-transition-after.png"
+    },
+    {
+      "name": "middle",
+      "time": 10,
+      "file": "C:\\Users\\user\\OpsCue\\OpsCue-team-main\\artifacts\\geekten2026-demo-video-20261028\\production-recording-2026-10-29T13-12-25-097Z\\frame-middle.png"
+    },
+    {
+      "name": "end",
+      "time": 16,
+      "file": "C:\\Users\\user\\OpsCue\\OpsCue-team-main\\artifacts\\geekten2026-demo-video-20261028\\production-recording-2026-10-29T13-12-25-097Z\\frame-end.png"
+    }
+  ],
+  "status": "RECORDED_DECODED",
+  "stopped": true,
+  "preservationChanged": [],
+  "newSiteFiles": []
+}

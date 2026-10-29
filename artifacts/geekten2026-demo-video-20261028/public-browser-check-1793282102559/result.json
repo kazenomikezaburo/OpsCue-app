@@ -1,0 +1,281 @@
+{
+  "run": "C:\\Users\\user\\OpsCue\\OpsCue-team-main\\artifacts\\geekten2026-demo-video-20261028\\public-browser-check-1793282102559",
+  "preflight": [
+    {
+      "path": "/",
+      "type": "text/html; charset=utf-8"
+    },
+    {
+      "path": "/_next/static/css/d7ec3b0dace09044.css",
+      "type": "text/css; charset=utf-8"
+    },
+    {
+      "path": "/_next/static/chunks/webpack-065cf1e3ff094aa8.js",
+      "type": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/_next/static/chunks/4bd1b696-c7408084347438ae.js",
+      "type": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/_next/static/chunks/794-f6a16fdde17f7dcf.js",
+      "type": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/_next/static/chunks/main-app-c92283d503dde55c.js",
+      "type": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/_next/static/chunks/500-fc3b64d9ff4a32a7.js",
+      "type": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/_next/static/chunks/702-6c7dae6d175cb3b8.js",
+      "type": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/_next/static/chunks/app/layout-4bbe022e578c0f5e.js",
+      "type": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/_next/static/chunks/app/page-1d4617462eb6c93e.js",
+      "type": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/_next/static/chunks/polyfills-42372ed130431b0a.js",
+      "type": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/admin/",
+      "type": "text/html; charset=utf-8"
+    },
+    {
+      "path": "/worker/",
+      "type": "text/html; charset=utf-8"
+    },
+    {
+      "path": "/guide/",
+      "type": "text/html; charset=utf-8"
+    },
+    {
+      "path": "/_next/static/chunks/409-3be9b1bbd6fb5a89.js",
+      "type": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/_next/static/chunks/app/admin/layout-f9e9579cd4581e6e.js",
+      "type": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/_next/static/chunks/app/admin/page-630c657cc459c45c.js",
+      "type": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/admin/attention/",
+      "type": "text/html; charset=utf-8"
+    },
+    {
+      "path": "/admin/projects/",
+      "type": "text/html; charset=utf-8"
+    },
+    {
+      "path": "/admin/shifts/",
+      "type": "text/html; charset=utf-8"
+    },
+    {
+      "path": "/admin/attendance/",
+      "type": "text/html; charset=utf-8"
+    },
+    {
+      "path": "/admin/workers/",
+      "type": "text/html; charset=utf-8"
+    },
+    {
+      "path": "/admin/shifts/demo-reception/",
+      "type": "text/html; charset=utf-8"
+    },
+    {
+      "path": "/admin/shifts/demo-preparation/",
+      "type": "text/html; charset=utf-8"
+    },
+    {
+      "path": "/admin/shifts/demo-installation/",
+      "type": "text/html; charset=utf-8"
+    },
+    {
+      "path": "/admin/shifts/demo-guide/",
+      "type": "text/html; charset=utf-8"
+    },
+    {
+      "path": "/admin/shifts/demo-community-shift/",
+      "type": "text/html; charset=utf-8"
+    },
+    {
+      "path": "/_next/static/chunks/app/worker/layout-c5be20609b51042f.js",
+      "type": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/_next/static/chunks/app/worker/page-131ae86b58e89f5e.js",
+      "type": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/worker/recruitment/",
+      "type": "text/html; charset=utf-8"
+    },
+    {
+      "path": "/worker/shifts/",
+      "type": "text/html; charset=utf-8"
+    },
+    {
+      "path": "/worker/support/",
+      "type": "text/html; charset=utf-8"
+    },
+    {
+      "path": "/worker/mypage/",
+      "type": "text/html; charset=utf-8"
+    },
+    {
+      "path": "/worker/assignments/demo-assignment-reception-1/",
+      "type": "text/html; charset=utf-8"
+    },
+    {
+      "path": "/worker/recruitment/demo-guide/",
+      "type": "text/html; charset=utf-8"
+    },
+    {
+      "path": "/worker/recruitment/demo-community-shift/",
+      "type": "text/html; charset=utf-8"
+    },
+    {
+      "path": "/_next/static/chunks/app/guide/page-aa6fc8a70fee0e05.js",
+      "type": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/_next/static/chunks/app/admin/attention/page-7aadf0529a7abf77.js",
+      "type": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/_next/static/chunks/app/admin/projects/page-7cc78040d01af564.js",
+      "type": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/admin/projects/demo-exhibition/",
+      "type": "text/html; charset=utf-8"
+    },
+    {
+      "path": "/admin/projects/demo-setup/",
+      "type": "text/html; charset=utf-8"
+    },
+    {
+      "path": "/admin/projects/demo-guidance/",
+      "type": "text/html; charset=utf-8"
+    },
+    {
+      "path": "/admin/projects/demo-community/",
+      "type": "text/html; charset=utf-8"
+    },
+    {
+      "path": "/_next/static/chunks/63-c565688fb772f707.js",
+      "type": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/_next/static/chunks/app/admin/shifts/page-6a7b254272992142.js",
+      "type": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/_next/static/chunks/app/admin/attendance/page-a81040af1b795a5a.js",
+      "type": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/_next/static/chunks/app/admin/workers/page-25240360569fe58d.js",
+      "type": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/_next/static/chunks/app/admin/shifts/%5BshiftId%5D/page-14e6f5ec0095152a.js",
+      "type": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/_next/static/chunks/398-f0531e3961b5319c.js",
+      "type": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/_next/static/chunks/app/worker/recruitment/page-edb14d11ffb496c5.js",
+      "type": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/_next/static/chunks/app/worker/shifts/page-4852afd469486fea.js",
+      "type": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/_next/static/chunks/app/worker/support/page-21cb4ba59093e376.js",
+      "type": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/_next/static/chunks/app/worker/mypage/page-8c2f75680aa9dfd2.js",
+      "type": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/_next/static/chunks/app/worker/assignments/%5BassignmentId%5D/page-928f50cbfbbb69b9.js",
+      "type": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/_next/static/chunks/app/worker/recruitment/%5BshiftId%5D/page-d3cca6e0421bb547.js",
+      "type": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/_next/static/chunks/app/admin/projects/%5BprojectId%5D/page-505e2629fbd38ddd.js",
+      "type": "application/javascript; charset=utf-8"
+    }
+  ],
+  "requests": [
+    {
+      "role": "worker",
+      "url": "https://ops-cue-geekten-demo.vercel.app/worker/",
+      "method": "GET",
+      "type": "document"
+    }
+  ],
+  "denied": [
+    {
+      "proxy": "http://clients2.google.com/time/1/current?cup2key=ML-DSA-44-10:8l6-MF-RWU9ngkWpkYyHPl55el2Fsi69WoLIKDoZmd4&cup2hreq=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "proxyConnect": "www.gstatic.com:443"
+    },
+    {
+      "proxyConnect": "www.google.com:443"
+    },
+    {
+      "proxyConnect": "www.google.com:443"
+    },
+    {
+      "proxyConnect": "update.googleapis.com:443"
+    },
+    {
+      "proxy": "http://update.googleapis.com/service/update2/json?cup2key=ML-DSA-44-16:GraHxNO7BxOwLIMYqgEUH24AblrjUCV1rp8GC32JUws&cup2hreq=2424f05f7ed9246c9d7c9d0197605cead334f83e410fcd41ac244ab784fc7010"
+    },
+    {
+      "proxyConnect": "accounts.google.com:443"
+    },
+    {
+      "proxyConnect": "www.google.com:443"
+    },
+    {
+      "role": "worker",
+      "url": "https://ops-cue-geekten-demo.vercel.app/worker/",
+      "method": "GET",
+      "type": "document"
+    },
+    {
+      "proxyConnect": "www.google.com:443"
+    },
+    {
+      "proxyConnect": "www.google.com:443"
+    }
+  ],
+  "errors": [],
+  "views": [],
+  "timings": [],
+  "status": "STOPPED",
+  "failure": "page.goto: net::ERR_FAILED at https://ops-cue-geekten-demo.vercel.app/worker/\nCall log:\n\u001b[2m  - navigating to \"https://ops-cue-geekten-demo.vercel.app/worker/\", waiting until \"networkidle\"\u001b[22m\n\n    at C:\\Users\\user\\OpsCue\\OpsCue-team-main\\artifacts\\geekten2026-demo-video-20261028\\public-browser-check-1793282102377.cjs:16:47",
+  "closed": true
+}

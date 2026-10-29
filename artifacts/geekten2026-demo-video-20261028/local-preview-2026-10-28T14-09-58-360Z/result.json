@@ -1,0 +1,213 @@
+{
+  "run": "C:\\Users\\user\\OpsCue\\OpsCue-team-main\\artifacts\\geekten2026-demo-video-20261028\\local-preview-2026-10-28T14-09-58-360Z",
+  "staticOutput": "C:\\Users\\user\\OpsCue-Geekten-Demo\\site\\out",
+  "requests": [
+    {
+      "url": "http://127.0.0.1:4317/worker/",
+      "method": "GET",
+      "type": "document",
+      "allowed": true
+    },
+    {
+      "url": "http://127.0.0.1:4317/_next/static/css/5081f8f7d834aca9.css",
+      "method": "GET",
+      "type": "stylesheet",
+      "allowed": true
+    },
+    {
+      "url": "http://127.0.0.1:4317/_next/static/chunks/webpack-18d35324d4c7d747.js",
+      "method": "GET",
+      "type": "script",
+      "allowed": true
+    },
+    {
+      "url": "http://127.0.0.1:4317/_next/static/chunks/4bd1b696-c7408084347438ae.js",
+      "method": "GET",
+      "type": "script",
+      "allowed": true
+    },
+    {
+      "url": "http://127.0.0.1:4317/_next/static/chunks/794-f6a16fdde17f7dcf.js",
+      "method": "GET",
+      "type": "script",
+      "allowed": true
+    },
+    {
+      "url": "http://127.0.0.1:4317/_next/static/chunks/main-app-3c8ff4fa36e40248.js",
+      "method": "GET",
+      "type": "script",
+      "allowed": true
+    },
+    {
+      "url": "http://127.0.0.1:4317/_next/static/chunks/500-fc3b64d9ff4a32a7.js",
+      "method": "GET",
+      "type": "script",
+      "allowed": true
+    },
+    {
+      "url": "http://127.0.0.1:4317/_next/static/chunks/702-6c7dae6d175cb3b8.js",
+      "method": "GET",
+      "type": "script",
+      "allowed": true
+    },
+    {
+      "url": "http://127.0.0.1:4317/_next/static/chunks/app/layout-431f53c9a755a7f5.js",
+      "method": "GET",
+      "type": "script",
+      "allowed": true
+    },
+    {
+      "url": "http://127.0.0.1:4317/_next/static/chunks/app/page-9acf1ecab13f5ac8.js",
+      "method": "GET",
+      "type": "script",
+      "allowed": true
+    },
+    {
+      "url": "http://127.0.0.1:4317/_next/static/chunks/app/worker/layout-d977794bcc5c660d.js",
+      "method": "GET",
+      "type": "script",
+      "allowed": true
+    },
+    {
+      "url": "http://127.0.0.1:4317/_next/static/chunks/app/worker/page-e0029ff66122506b.js",
+      "method": "GET",
+      "type": "script",
+      "allowed": true
+    },
+    {
+      "url": "http://127.0.0.1:4317/",
+      "method": "HEAD",
+      "type": "fetch",
+      "allowed": false
+    },
+    {
+      "url": "http://127.0.0.1:4317/admin/",
+      "method": "HEAD",
+      "type": "fetch",
+      "allowed": false
+    },
+    {
+      "url": "http://127.0.0.1:4317/worker/",
+      "method": "HEAD",
+      "type": "fetch",
+      "allowed": false
+    },
+    {
+      "url": "http://127.0.0.1:4317/guide/",
+      "method": "HEAD",
+      "type": "fetch",
+      "allowed": false
+    },
+    {
+      "url": "http://127.0.0.1:4317/worker/recruitment/",
+      "method": "HEAD",
+      "type": "fetch",
+      "allowed": false
+    },
+    {
+      "url": "http://127.0.0.1:4317/worker/shifts/",
+      "method": "HEAD",
+      "type": "fetch",
+      "allowed": false
+    },
+    {
+      "url": "http://127.0.0.1:4317/worker/support/",
+      "method": "HEAD",
+      "type": "fetch",
+      "allowed": false
+    },
+    {
+      "url": "http://127.0.0.1:4317/worker/mypage/",
+      "method": "HEAD",
+      "type": "fetch",
+      "allowed": false
+    },
+    {
+      "url": "http://127.0.0.1:4317/worker/assignments/demo-assignment-reception-1/",
+      "method": "HEAD",
+      "type": "fetch",
+      "allowed": false
+    },
+    {
+      "url": "http://127.0.0.1:4317/worker/recruitment/demo-guide/",
+      "method": "HEAD",
+      "type": "fetch",
+      "allowed": false
+    },
+    {
+      "url": "http://127.0.0.1:4317/worker/recruitment/demo-community-shift/",
+      "method": "HEAD",
+      "type": "fetch",
+      "allowed": false
+    }
+  ],
+  "denied": [
+    {
+      "url": "http://127.0.0.1:4317/",
+      "method": "HEAD",
+      "type": "fetch"
+    },
+    {
+      "url": "http://127.0.0.1:4317/admin/",
+      "method": "HEAD",
+      "type": "fetch"
+    },
+    {
+      "url": "http://127.0.0.1:4317/worker/",
+      "method": "HEAD",
+      "type": "fetch"
+    },
+    {
+      "url": "http://127.0.0.1:4317/guide/",
+      "method": "HEAD",
+      "type": "fetch"
+    },
+    {
+      "url": "http://127.0.0.1:4317/worker/recruitment/",
+      "method": "HEAD",
+      "type": "fetch"
+    },
+    {
+      "url": "http://127.0.0.1:4317/worker/shifts/",
+      "method": "HEAD",
+      "type": "fetch"
+    },
+    {
+      "url": "http://127.0.0.1:4317/worker/support/",
+      "method": "HEAD",
+      "type": "fetch"
+    },
+    {
+      "url": "http://127.0.0.1:4317/worker/mypage/",
+      "method": "HEAD",
+      "type": "fetch"
+    },
+    {
+      "url": "http://127.0.0.1:4317/worker/assignments/demo-assignment-reception-1/",
+      "method": "HEAD",
+      "type": "fetch"
+    },
+    {
+      "url": "http://127.0.0.1:4317/worker/recruitment/demo-guide/",
+      "method": "HEAD",
+      "type": "fetch"
+    },
+    {
+      "url": "http://127.0.0.1:4317/worker/recruitment/demo-community-shift/",
+      "method": "HEAD",
+      "type": "fetch"
+    }
+  ],
+  "errors": [],
+  "started": "2026-10-28T14:09:58.562Z",
+  "listen": {
+    "address": "127.0.0.1",
+    "family": "IPv4",
+    "port": 4317
+  },
+  "status": "BLOCKED",
+  "failure": "Error: Unapproved activity: {\"url\":\"http://127.0.0.1:4317/worker/recruitment/demo-community-shift/\",\"method\":\"HEAD\",\"type\":\"fetch\"}\n    at deny (C:\\Users\\user\\OpsCue\\OpsCue-team-main\\artifacts\\geekten2026-demo-video-20261028\\limited-local-check.cjs:18:46)\n    at C:\\Users\\user\\OpsCue\\OpsCue-team-main\\artifacts\\geekten2026-demo-video-20261028\\limited-local-check.cjs:22:301\n    at RouteHandler._handleInternal (C:\\Users\\user\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\node_modules\\playwright-core\\lib\\coreBundle.js:59786:11)\n    at RouteHandler._handleImpl (C:\\Users\\user\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\node_modules\\playwright-core\\lib\\coreBundle.js:59753:29)\n    at C:\\Users\\user\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\node_modules\\playwright-core\\lib\\coreBundle.js:59747:59\n    at AsyncLocalStorage.run (node:internal/async_local_storage/async_context_frame:63:14)\n    at _Zone.run (C:\\Users\\user\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\node_modules\\playwright-core\\lib\\coreBundle.js:10149:40)\n    at RouteHandler.handle (C:\\Users\\user\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\node_modules\\playwright-core\\lib\\coreBundle.js:59747:38)\n    at _BrowserContext._onRoute (C:\\Users\\user\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\node_modules\\playwright-core\\lib\\coreBundle.js:61965:46)\n    at Proxy.<anonymous> (C:\\Users\\user\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\node_modules\\playwright-core\\lib\\coreBundle.js:61833:63)",
+  "stopped": true,
+  "preservationChanged": [],
+  "newSiteFiles": []
+}

@@ -1,0 +1,122 @@
+{
+  "slides": [
+    {
+      "title": "OpsCue｜募集から、現場が無事に終わるまで。",
+      "slot": 15,
+      "speech": 14,
+      "script": "「明日の集合場所、どこだっけ。」私自身、現場スタッフとして、必要な情報を探し直す不便さを感じていました。その経験から生まれたのが、OpsCueです。",
+      "cue": "冒頭の問いの後に短く間を取る。0:15までに次へ。",
+      "sources": [
+        "C:/Users/user/OpsCue/OpsCue-team-main/docs/ui_仕様書/OpsCue_Master_Specification_v1.3_2026-10-23.md",
+        "C:/Users/user/Pictures/95fd3106-53b5-4d06-b849-cbea5271f02c.png"
+      ],
+      "criteria": "作品の価値：現場体験から生まれた動機",
+      "note": "表紙の端末画像は提供されたコンセプトビジュアル。実装・動作確認の証拠ではない。"
+    },
+    {
+      "title": "勤務前に、情報を探し直していた",
+      "slot": 25,
+      "speech": 23,
+      "script": "集合案内はLINE、注意事項は別の資料。勤務前に、いくつもの場所を探していました。管理者の方からも、前日や当日朝の連絡を分かりやすくしたい、という声がありました。同じ勤務を支えるのに、スタッフも管理者も、確認に手間がかかっている。これが開発の出発点です。",
+      "cue": "最初の30秒以内に「情報が分散している不便」を伝える。0:40までに次へ。",
+      "sources": [
+        "C:/Users/user/OpsCue/OpsCue-team-main/docs/ui_仕様書/OpsCue_Master_Specification_v1.3_2026-10-23.md"
+      ],
+      "criteria": "作品の価値：当事者の課題と双方の負担",
+      "note": "Master Specification A.1/A.2。現場経験・会話に基づく課題仮説。正式な導入依頼・導入決定・定量効果を示さない。"
+    },
+    {
+      "title": "一つの勤務に、情報と行動をまとめる",
+      "slot": 30,
+      "speech": 28,
+      "script": "OpsCueは、募集から勤務完了までの情報を、一つの勤務を軸につなぐサービスです。スタッフには、次の勤務と、今やること。管理者には、確認が必要な人や現場を示します。こだわったのは、両者がそれぞれの立場で、次の行動を判断できることです。連絡を集めるだけでなく、現場で動くための入口をそろえます。",
+      "cue": "上の業務フローから、下のWorker/Adminへ視線を移す。1:10までに次へ。",
+      "sources": [
+        "C:/Users/user/OpsCue/OpsCue-team-main/docs/ui_仕様書/OpsCue_Master_Specification_v1.3_2026-10-23.md"
+      ],
+      "criteria": "作品の価値：一つの勤務を軸に役割別の行動を支える設計",
+      "note": "図は目指す業務フロー。全工程の実装・連携・動作検証済みを示す図ではない。"
+    },
+    {
+      "title": "立場に合わせて、必要な情報が見える",
+      "slot": 35,
+      "speech": 33,
+      "script": "こちらは、テストデータを使った保存画面です。左はスタッフ向け。次の勤務の日時と勤務先を確認し、詳細へ進む入口があります。右は管理者向け。前日確認がまだ提出されていないことを表示しています。スタッフは自分の勤務を、管理者は確認が必要な人を把握する。それぞれの立場で必要な情報を見せる設計です。二つは別の勤務の表示例で、現在の動作を示すものではありません。",
+      "cue": "全体像を示してから、左の「次の勤務」と右の「未提出」の拡大部分を指す。同期・操作前後とは説明しない。1:45までに次へ。",
+      "sources": [
+        "C:/Users/user/OpsCue/OpsCue-team-main/docs/ui-screenshots/worker/home.png",
+        "C:/Users/user/OpsCue/OpsCue-team-main/docs/ui-screenshots/admin/shifts-pre-shift-detail.png",
+        "C:/Users/user/OpsCue/OpsCue-team-main/docs/ui-screenshots/README.md"
+      ],
+      "criteria": "完成度：保存済み実画面と役割別の情報設計",
+      "note": "2026-10-20のテストデータによる保存画面。WorkerはTEST Worker A、AdminはTEST Worker Bの別勤務。現在の動作確認や同一勤務の同期を示さない。原画像からネイティブ画像トリミングのみ。"
+    },
+    {
+      "title": "応募できたか分からない。その再試行を安全に",
+      "slot": 35,
+      "speech": 33,
+      "script": "応募したあと、通信が切れると、届いたのか分からなくなります。そこで単一応募では、同じ受付キーで再試行し、結果が記録済みなら再利用する設計にしています。同じ応募を重複登録しないための、冪等性という考え方です。ソース実装はありますが、実環境での復旧は未検証です。同じ案件の一から十シフトを、全件成功か新規登録ゼロにする一括応募は、別途設計中です。",
+      "cue": "上段の問題、中央の同じキーによる再試行、下段の実装・未検証・設計中の順に説明。2:20までに次へ。",
+      "sources": [
+        "C:/Users/user/OpsCue/OpsCue-team-main/app/actions/worker-shift-applications.ts",
+        "C:/Users/user/OpsCue/OpsCue-team-main/components/worker/recruitment/worker-recruitment-application-controls.tsx",
+        "C:/Users/user/OpsCue/OpsCue-team-main/supabase/migrations/20260926175812_ocv1_worker_application_commands.sql",
+        "C:/Users/user/OpsCue/OpsCue-team-main/docs/ui_仕様書/OpsCue_Backend_%E9%96%8B%E7%99%BA%E6%89%8B%E9%A0%86%E6%9B%B8_20261023_%E6%94%B9%E8%A8%82%E7%89%88.md"
+      ],
+      "criteria": "技術レベル：結果不明・同一キー再試行・冪等性と一括処理の原子性",
+      "note": "単一応募のコードはunknownを返し、retryable時にコンポーネント内のキーを保持する。SQLは要求内容を検査し、同じactor/keyの保存結果を返す。成功・キー保持の実環境検証は未実施。画面再読込や再ログインをまたぐキー永続化を保証しない。応募受付は採用・配置確定と別。一括応募の1〜10件、原子性、結果照会は設計段階。 v2の4段階目は「記録済みなら結果を再利用」と条件を明示する。全要求が記録済みだとは主張しない。"
+    },
+    {
+      "title": "勤務前の確認が、この画面にまとまる",
+      "slot": 25,
+      "speech": 23,
+      "script": "勤務前に、この画面で何を確認できるでしょうか。まず勤務先と住所、次に集合時刻、そして仕事内容。下には前日確認の回答があります。どこへ、何時に、どんな仕事へ向かうのかを、勤務ごとに見直せる構成です。今回は、同じ保存画面の必要な部分を拡大した静止画デモです。",
+      "cue": "全体画面を入口として、右の「どこへ」「何時に」「どんな仕事」「回答できているか」を上から順に指す。クリック不要。2:45までに次へ。",
+      "sources": [
+        "C:/Users/user/OpsCue/OpsCue-team-main/docs/ui-screenshots/worker/assignments-detail.png",
+        "C:/Users/user/OpsCue/OpsCue-team-main/docs/ui-screenshots/README.md"
+      ],
+      "criteria": "完成度：勤務前の確認に必要なUIを大きく提示",
+      "note": "静止画デモ。2026-10-20時点のテストデータ。左は保存画面全体、右は同じ画像の4領域の拡大。配置・確認番号・線はスライド側の説明。準備情報は元画面にある勤務先・住所・集合時刻・仕事内容まで。持ち物、地図、チェックリスト等を創作しない。現在の動作や操作前後ではない。"
+    },
+    {
+      "title": "「どこだっけ」を減らし、次の行動へ",
+      "slot": 15,
+      "speech": 14,
+      "script": "「集合場所、どこだっけ」を減らし、安心して次の行動を選べる現場を目指します。今後は一括応募の検証と改善を進めます。OpsCue。募集から、現場が無事に終わるまで。",
+      "cue": "冒頭の問いに戻り、目指す価値として述べる。最後のコピーに短く間を置く。3:00までに終了。",
+      "sources": [
+        "C:/Users/user/OpsCue/OpsCue-team-main/docs/ui_仕様書/OpsCue_Master_Specification_v1.3_2026-10-23.md",
+        "C:/Users/user/OpsCue/OpsCue-team-main/docs/ui_仕様書/OpsCue_Backend_%E9%96%8B%E7%99%BA%E6%89%8B%E9%A0%86%E6%9B%B8_20261023_%E6%94%B9%E8%A8%82%E7%89%88.md"
+      ],
+      "criteria": "作品の価値：可能性／技術レベル：次の検証課題",
+      "note": "今後の提案・展望。導入実績や現場検証済みの効果は主張しない。"
+    }
+  ],
+  "src": {
+    "key": "C:/Users/user/Pictures/95fd3106-53b5-4d06-b849-cbea5271f02c.png",
+    "worker": "C:/Users/user/OpsCue/OpsCue-team-main/docs/ui-screenshots/worker/home.png",
+    "admin": "C:/Users/user/OpsCue/OpsCue-team-main/docs/ui-screenshots/admin/shifts-pre-shift-detail.png",
+    "detail": "C:/Users/user/OpsCue/OpsCue-team-main/docs/ui-screenshots/worker/assignments-detail.png",
+    "master": "C:/Users/user/OpsCue/OpsCue-team-main/docs/ui_仕様書/OpsCue_Master_Specification_v1.3_2026-10-23.md",
+    "backend": "C:/Users/user/OpsCue/OpsCue-team-main/docs/ui_仕様書/OpsCue_Backend_%E9%96%8B%E7%99%BA%E6%89%8B%E9%A0%86%E6%9B%B8_20261023_%E6%94%B9%E8%A8%82%E7%89%88.md",
+    "catalog": "C:/Users/user/OpsCue/OpsCue-team-main/docs/ui-screenshots/README.md",
+    "action": "C:/Users/user/OpsCue/OpsCue-team-main/app/actions/worker-shift-applications.ts",
+    "control": "C:/Users/user/OpsCue/OpsCue-team-main/components/worker/recruitment/worker-recruitment-application-controls.tsx",
+    "sql": "C:/Users/user/OpsCue/OpsCue-team-main/supabase/migrations/20260926175812_ocv1_worker_application_commands.sql"
+  },
+  "font": "Noto Sans JP",
+  "colors": {
+    "navy": "#071D3B",
+    "blue": "#0865EF",
+    "cyan": "#58CAFF",
+    "ink": "#142A44",
+    "muted": "#4C6279",
+    "pale": "#EFF5FC",
+    "white": "#FFFFFF",
+    "line": "#CCDAEA",
+    "darkCard": "#132F52",
+    "amber": "#946110",
+    "amberBg": "#FFF5DD"
+  }
+}

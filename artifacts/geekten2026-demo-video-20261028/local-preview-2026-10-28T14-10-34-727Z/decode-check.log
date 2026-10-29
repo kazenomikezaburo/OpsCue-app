@@ -1,0 +1,29 @@
+[libvpx @ 0000025ddd717e40] v1.14.1
+Input #0, matroska,webm, from 'C:\Users\user\OpsCue\OpsCue-team-main\artifacts\geekten2026-demo-video-20261028\local-preview-2026-10-28T14-10-34-727Z\videos\page@c65079fac97348ae8ab3f14b5fde6ed3.webm':
+  Metadata:
+    ENCODER         : Lavf61.1.100
+  Duration: 00:00:02.68, start: 0.000000, bitrate: 243 kb/s
+  Stream #0:0(eng): Video: vp8 (libvpx), yuv420p(tv, progressive), 1280x720, SAR 1:1 DAR 16:9, 25 fps, 25 tbr, 1k tbn (default)
+      Metadata:
+        ENCODER         : Lavc61.3.100 libvpx
+        DURATION        : 00:00:02.680000000
+[libvpx @ 0000025ddfb219c0] v1.14.1
+Stream mapping:
+  Stream #0:0 -> #0:0 (vp8 (libvpx) -> vp8 (libvpx))
+Press [q] to stop, [?] for help
+[libvpx @ 0000025ddfc06e00] v1.14.1
+[libvpx @ 0000025ddfc06e00] Neither bitrate nor constrained quality specified, using default CRF of 32 and bitrate of 256kbit/sec
+Output #0, webm, to 'C:\Users\user\OpsCue\OpsCue-team-main\artifacts\geekten2026-demo-video-20261028\local-preview-2026-10-28T14-10-34-727Z\decode-check.webm':
+  Metadata:
+    encoder         : Lavf61.1.100
+  Stream #0:0(eng): Video: vp8, yuv420p(tv, progressive), 1280x720 [SAR 1:1 DAR 16:9], q=2-31, 256 kb/s, 25 fps, 1k tbn (default)
+      Metadata:
+        DURATION        : 00:00:02.680000000
+        encoder         : Lavc61.3.100 libvpx
+      Side data:
+        cpb: bitrate max/min/avg: 0/0/0 buffer size: 0 vbv_delay: N/A
+frame=   16 fps=0.0 q=32.0 size=       0KiB time=00:00:00.64 bitrate=   5.9kbits/s speed=1.26x    
+frame=   27 fps= 26 q=32.0 size=       0KiB time=00:00:01.08 bitrate=   3.5kbits/s speed=1.06x    
+frame=   55 fps= 36 q=32.0 size=       0KiB time=00:00:02.20 bitrate=   1.7kbits/s speed=1.43x    
+[out#0/webm @ 0000025ddd71d580] video:56KiB audio:0KiB subtitle:0KiB other streams:0KiB global headers:0KiB muxing overhead: 1.632001%
+frame=   67 fps= 42 q=32.0 Lsize=      57KiB time=00:00:02.68 bitrate= 174.7kbits/s speed=1.66x    
