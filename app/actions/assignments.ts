@@ -13,11 +13,42 @@ const absentGeneralMessage = "欠勤状態を更新できませんでした。�
 const noShowGeneralMessage = "無断欠勤状態を更新できませんでした。最新の勤務状況を確認して、もう一度お試しください。";
 const failure = (message = generalMessage): AssignmentActionResult => ({ ok: false, message });
 
+const acceptedApplicationMessages: Record<string, string> = {
+  capacity_reached: "必要人数に達したため、配置できませんでした。",
+  not_eligible: "現在の勤務条件では、このスタッフを配置できません。",
+  application_decision_required: "応募の承認または却下を先に完了してください。",
+  application_rejected: "却下済みの応募は配置できません。",
+  application_withdrawn: "辞退済みの応募は配置できません。",
+  shift_state_unavailable: "現在のシフト状態では配置できません。",
+  unavailable: "対象を確認できないか、この操作を実行する権限がありません。",
+  IDEMPOTENCY_CONFLICT: "操作内容が一致しませんでした。画面を再読み込みしてから、もう一度操作してください。",
+};
+const unknownAssignMessage = "通信結果を確認できませんでした。同じ操作を再度お試しください。";
+
+type CandidateAssignmentRpcResult = {
+  ok?: boolean;
+  outcome?: string;
+  assignmentId?: string | null;
+  blockingReasons?: { code: string; label: string }[];
+} | null;
+
+// Accepted Application placement goes through the canonical command
+// (ensure_candidate_assignment), which checks Worker status, branch,
+// requirements, availability, overlap and Shift state, locks Shift then
+// Worker, and is idempotent per actor + key. The legacy
+// create_assignment_from_application RPC is no longer called from the app.
 export async function assignWorkerToShift(
   shiftId: string,
-  applicationId: string,
+  workerId: string,
+  idempotencyKey: string,
 ): Promise<AssignmentActionResult> {
-  if (!uuidSchema.safeParse(shiftId).success || !uuidSchema.safeParse(applicationId).success) return failure();
+  if (
+    !uuidSchema.safeParse(shiftId).success ||
+    !uuidSchema.safeParse(workerId).success ||
+    !uuidSchema.safeParse(idempotencyKey).success
+  ) {
+    return failure();
+  }
 
   const auth = await getCurrentProfile();
   if (
@@ -36,21 +67,39 @@ export async function assignWorkerToShift(
       .maybeSingle();
     if (shiftResult.error || !shiftResult.data) return failure();
 
-    const rpcResult = await supabase.rpc("create_assignment_from_application", {
+    const rpcResult = await supabase.rpc("ensure_candidate_assignment", {
       p_shift_id: shiftId,
-      p_application_id: applicationId,
+      p_worker_id: workerId,
+      p_assignment_path: "accepted_application",
+      p_idempotency_key: idempotencyKey,
     });
     if (rpcResult.error) throw rpcResult.error;
+
+    const result = rpcResult.data as CandidateAssignmentRpcResult;
+    const outcome = result?.outcome ?? "unavailable";
+    if (
+      !result?.ok ||
+      !result.assignmentId ||
+      !["assignment_created", "existing_assignment"].includes(outcome)
+    ) {
+      return {
+        ok: false,
+        message: acceptedApplicationMessages[outcome] ?? generalMessage,
+        retryable: false,
+        blockingReasons: Array.isArray(result?.blockingReasons) ? result.blockingReasons : undefined,
+      };
+    }
 
     const job = shiftResult.data.jobs as unknown as { project_id: string };
     revalidatePath("/admin");
     revalidatePath("/admin/shifts");
     revalidatePath(`/admin/shifts/${shiftId}`);
     revalidatePath(`/admin/projects/${job.project_id}`);
+    revalidatePath("/admin/placement");
     return { ok: true };
   } catch (error: unknown) {
     console.error("Failed to assign worker to shift", error);
-    return failure();
+    return { ok: false, message: unknownAssignMessage, retryable: true };
   }
 }
 
