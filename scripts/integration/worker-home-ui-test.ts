@@ -33,3 +33,37 @@ test("existing attendance contract exposes end-work only for an active assignmen
   const ended = { ...assignment("ended", "2026-09-29T01:00:00Z", "2026-09-29T09:00:00Z", null), canEndWork: true };
   assert.equal(selectWorkerHomeEndWork([ended, working])?.id, "working");
 });
+
+test("active assignment without a next action is excluded only from Next Action", () => {
+  const noAction = assignment(
+    "no-action",
+    "2026-10-01T04:00:00Z",
+    "2026-10-01T09:00:00Z",
+    null,
+  );
+
+  assert.equal(selectWorkerHomeNextAction([noAction]), null);
+  assert.equal(selectWorkerHomeNextShift([noAction])?.id, "no-action");
+});
+
+for (const state of ["actionable", "overdue"] as const) {
+  test(`Next Action selects ${state} over null in either input order`, () => {
+    const noAction = assignment(
+      "no-action",
+      "2026-10-01T01:00:00Z",
+      "2026-10-01T09:00:00Z",
+      null,
+    );
+    const withAction = assignment(
+      state,
+      "2026-10-01T04:00:00Z",
+      "2026-10-01T09:00:00Z",
+      state,
+    );
+
+    assert.equal(selectWorkerHomeNextAction([noAction, withAction])?.id, state);
+    assert.equal(selectWorkerHomeNextAction([withAction, noAction])?.id, state);
+    assert.equal(selectWorkerHomeNextShift([noAction, withAction])?.id, "no-action");
+    assert.equal(selectWorkerHomeNextShift([withAction, noAction])?.id, "no-action");
+  });
+}
