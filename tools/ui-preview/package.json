@@ -1,0 +1,30 @@
+{
+  "name": "opscue-ui-preview",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": "22.23.3",
+    "npm": "10.9.9"
+  },
+  "packageManager": "npm@10.9.9",
+  "scripts": {
+    "check:boundary": "node scripts/check-boundary.mjs",
+    "test:boundary": "node --test scripts/check-boundary.test.mjs",
+    "typecheck": "tsc --noEmit",
+    "build": "node scripts/check-build-input.mjs"
+  },
+  "dependencies": {
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "devDependencies": {
+    "vite": "7.3.7",
+    "typescript": "5.9.3",
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.7",
+    "postcss": "8.5.29",
+    "postcss-value-parser": "4.2.0",
+    "parse5": "8.0.1"
+  }
+}

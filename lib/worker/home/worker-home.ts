@@ -8,7 +8,7 @@ function isActive(assignment: WorkerAssignment) {
 
 export function selectWorkerHomeNextAction(assignments: WorkerAssignment[]) {
   return assignments
-    .filter((assignment) => isActive(assignment) && assignment.timeline.nextAction?.state !== "not_open")
+    .filter((assignment) => isActive(assignment) && assignment.timeline.nextAction != null && assignment.timeline.nextAction.state !== "not_open")
     .toSorted((a, b) => compareWorkerPrimaryActions(a, b))[0] ?? null;
 }
 
