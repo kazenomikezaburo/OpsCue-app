@@ -24,6 +24,7 @@ const controls = loadComponent(componentRoot + "worker-recruitment-application-c
   "@/app/actions/worker-shift-applications": {},
 });
 const views = loadComponent(componentRoot + "worker-recruitment.tsx", {
+  "./shift-detail-link": loadComponent(componentRoot + "shift-detail-link.tsx"),
   "@/components/worker/recruitment/worker-recruitment-application-controls": controls,
 });
 const item = {
@@ -40,7 +41,9 @@ test("one card and detail link per shift despite identical project names", () =>
   const html = render(views.WorkerRecruitmentList, { items: [item, other], page: 1, hasMore: true });
   assert.equal(html.match(/<article/g)?.length, 2);
   for (const shift of [item, other]) {
-    assert.ok(new RegExp('<a[^>]*href="/worker/recruitment/' + shift.shiftId + '"[^>]*>' + shift.jobName + '</a>').test(html));
+    assert.ok(html.includes('href="/worker/recruitment/' + shift.shiftId + '?page=1"'));
+    const detail = render(views.WorkerRecruitmentDetail, { item: shift, page: 1 });
+    assert.ok(detail.includes('href="/worker/recruitment?page=1#shift-' + shift.shiftId + '"'));
   }
   for (const page of [0, 2]) assert.ok(html.includes('/worker/recruitment?page=' + page));
   assert.doesNotMatch(render(views.WorkerRecruitmentList, { items: [], page: 0, hasMore: false }), /ページ送り/);

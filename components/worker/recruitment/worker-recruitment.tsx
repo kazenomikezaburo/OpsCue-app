@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ShiftDetailLink } from "./shift-detail-link";
 import { WorkerRecruitmentApplicationControls } from "@/components/worker/recruitment/worker-recruitment-application-controls";
 import type { RecruitmentShift } from "@/lib/worker/recruitment/get-worker-recruitment";
 
@@ -53,7 +54,7 @@ export function WorkerRecruitmentList({ items, hasMore, page }: { items: Recruit
             <article className={card}>
               <p className="break-words text-xs text-foreground-muted">{item.projectName}</p>
               <h2 className="break-words text-lg font-semibold">
-                <Link href={`/worker/recruitment/${item.shiftId}`} className={link}>{item.jobName}</Link>
+                <ShiftDetailLink shiftId={item.shiftId} page={page} className={link}>{item.jobName}</ShiftDetailLink>
               </h2>
               <div className="space-y-3 text-sm text-foreground-secondary">
                 <p className="font-semibold text-foreground">{schedule(item)}</p>
@@ -76,12 +77,12 @@ export function WorkerRecruitmentList({ items, hasMore, page }: { items: Recruit
   );
 }
 
-export function WorkerRecruitmentDetail({ item }: { item: RecruitmentShift }) {
+export function WorkerRecruitmentDetail({ item, page = 0 }: { item: RecruitmentShift; page?: number }) {
   const manual = safeUrl(item.manualUrl);
   const map = safeUrl(item.mapUrl);
   return (
     <main className={layout}>
-      <Link href="/worker/recruitment" className={link}>募集中の勤務へ戻る</Link>
+      <Link href={`/worker/recruitment${page ? `?page=${page}` : ""}#shift-${item.shiftId}`} className={link}>募集中の勤務へ戻る</Link>
       <header className="space-y-1">
         <p className="break-words text-sm text-foreground-muted">{item.projectName}</p>
         <h1 className="break-words text-2xl font-semibold">{item.jobName}</h1>
