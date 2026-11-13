@@ -10,12 +10,125 @@ const reason: Record<string, string> = { required_conditions_not_met: "必要な
 function pay(item: RecruitmentShift) { const values = [item.hourlyWage == null ? null : `時給 ${item.hourlyWage.toLocaleString("ja-JP")}円`, item.transportationFeeCap == null ? null : `交通費 上限${item.transportationFeeCap.toLocaleString("ja-JP")}円`].filter(Boolean); return values.join(" / ") || "条件は詳細で確認"; }
 function safeUrl(value: string | null) { if (!value) return null; try { const url = new URL(value); return url.protocol === "https:" || url.protocol === "http:" ? url.toString() : null; } catch { return null; } }
 
+const card = "min-w-0 rounded-card border border-border bg-surface p-4 sm:p-5";
+const link = "inline-flex min-h-11 items-center rounded-control px-2 font-semibold text-link underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-focus-ring";
+const layout = "mx-auto max-w-3xl space-y-4 px-4 py-6 text-foreground sm:px-6";
+
+function schedule(item: RecruitmentShift) {
+  const start = new Date(item.startsAt);
+  const end = new Date(item.endsAt);
+  const endDate = date.format(start) === date.format(end) ? "" : date.format(end) + " ";
+  return `${date.format(start)} ${time.format(start)}〜${endDate}${time.format(end)}`;
+}
+
+function ShiftStatus({ item }: { item: RecruitmentShift }) {
+  return (
+    <div className="space-y-1 text-sm">
+      <span className="inline-block rounded-pill bg-surface-muted px-3 py-1 font-semibold">{status[item.state]}</span>
+      {item.eligibility.safeReasons.filter((code) => Object.hasOwn(reason, code)).map((code) => (
+        <p key={code} className="text-warning-foreground">{reason[code]}</p>
+      ))}
+    </div>
+  );
+}
+
+function RecruitmentTerms({ item }: { item: RecruitmentShift }) {
+  const deadline = new Date(item.applicationDeadline);
+  return (
+    <dl className="grid gap-3 text-sm sm:grid-cols-2">
+      <Item label="残り枠">{item.remainingCapacity}人</Item>
+      <Item label="応募期限">{date.format(deadline)} {time.format(deadline)}</Item>
+    </dl>
+  );
+}
+
 export function WorkerRecruitmentList({ items, hasMore, page }: { items: RecruitmentShift[]; hasMore: boolean; page: number }) {
-  return <main className="mx-auto max-w-3xl px-4 py-6 sm:px-6 sm:py-10"><header><p className="text-sm font-semibold text-blue-700">募集中の勤務</p><h1 className="mt-2 text-2xl font-semibold text-slate-950">勤務を探す</h1><p className="mt-2 text-sm text-slate-600">応募できない勤務も、理由を確認できます。</p></header>{items.length === 0 ? <p className="mt-6 rounded-xl border border-slate-200 bg-white p-6 text-slate-600">現在募集中の勤務はありません。</p> : <ul className="mt-6 space-y-4">{items.map((item) => <li key={item.shiftId} className="rounded-xl border border-slate-200 bg-white p-5"><div className="flex flex-wrap items-start justify-between gap-3"><div className="min-w-0"><p className="text-sm font-semibold text-blue-700">{item.projectName}</p><h2 className="mt-1 text-lg font-semibold text-slate-950">{item.jobName}</h2><p className="mt-3 font-semibold text-slate-900">{date.format(new Date(item.startsAt))} {time.format(new Date(item.startsAt))}〜{time.format(new Date(item.endsAt))}</p><p className="mt-1 text-sm text-slate-700">{item.workplaceName}{item.meetingAt ? ` / 集合 ${time.format(new Date(item.meetingAt))}` : ""}</p></div><span className="rounded-full bg-slate-100 px-3 py-1 text-sm font-semibold text-slate-800">{status[item.state]}</span></div><p className="mt-4 text-sm text-slate-700">{pay(item)}</p><p className="mt-1 text-sm text-slate-600">応募期限: {date.format(new Date(item.applicationDeadline))} {time.format(new Date(item.applicationDeadline))} / 残り {item.remainingCapacity} 人</p>{item.eligibility.safeReasons.length > 0 && <p className="mt-3 text-sm text-amber-800">{item.eligibility.safeReasons.map((value) => reason[value]).filter(Boolean).join("。")}</p>}<Link href={`/worker/recruitment/${item.shiftId}`} className="mt-5 inline-flex min-h-11 items-center justify-center rounded-lg bg-blue-700 px-5 text-sm font-semibold text-white hover:bg-blue-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">詳細を見る</Link></li>)}</ul>}{(page > 0 || hasMore) && <nav aria-label="ページ送り" className="mt-6 flex justify-between gap-3">{page > 0 ? <Link href={`/worker/recruitment?page=${page - 1}`} className="min-h-11 rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold">前へ</Link> : <span />}{hasMore && <Link href={`/worker/recruitment?page=${page + 1}`} className="min-h-11 rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold">次へ</Link>}</nav>}</main>;
+  return (
+    <main className={layout}>
+      <h1 className="text-2xl font-semibold">勤務を探す</h1>
+      {items.length === 0 && <p role="status" className={card}>現在募集中の勤務はありません。</p>}
+      <ul className="space-y-3">
+        {items.map((item) => (
+          <li key={item.shiftId}>
+            <article className={card}>
+              <p className="break-words text-xs text-foreground-muted">{item.projectName}</p>
+              <h2 className="break-words text-lg font-semibold">
+                <Link href={`/worker/recruitment/${item.shiftId}`} className={link}>{item.jobName}</Link>
+              </h2>
+              <div className="space-y-3 text-sm text-foreground-secondary">
+                <p className="font-semibold text-foreground">{schedule(item)}</p>
+                <p>{item.workplaceName}{item.meetingAt && ` / 集合 ${time.format(new Date(item.meetingAt))}`}</p>
+                <p>{pay(item)}</p>
+                <RecruitmentTerms item={item} />
+                <ShiftStatus item={item} />
+              </div>
+            </article>
+          </li>
+        ))}
+      </ul>
+      {(page > 0 || hasMore) && (
+        <nav aria-label="ページ送り" className="flex gap-4">
+          {page > 0 && <Link href={`/worker/recruitment?page=${page - 1}`} className={link}>前へ</Link>}
+          {hasMore && <Link href={`/worker/recruitment?page=${page + 1}`} className={link}>次へ</Link>}
+        </nav>
+      )}
+    </main>
+  );
 }
 
 export function WorkerRecruitmentDetail({ item }: { item: RecruitmentShift }) {
-  const manual = safeUrl(item.manualUrl); const map = safeUrl(item.mapUrl);
-  return <main className="mx-auto max-w-3xl space-y-6 px-4 py-6 sm:px-6 sm:py-10"><Link href="/worker/recruitment" className="inline-flex min-h-11 items-center text-sm font-semibold text-blue-700 underline underline-offset-2">募集中の勤務へ戻る</Link><header><p className="text-sm font-semibold text-blue-700">{item.projectName}</p><h1 className="mt-2 text-2xl font-semibold text-slate-950">{item.jobName}</h1><p className="mt-3 font-semibold text-slate-900">{date.format(new Date(item.startsAt))} {time.format(new Date(item.startsAt))}〜{time.format(new Date(item.endsAt))}</p></header><section className="rounded-xl border border-slate-200 bg-white p-5 sm:p-6"><h2 className="text-lg font-semibold">応募状況</h2><p className="mt-3 font-semibold text-slate-900">{status[item.state]}</p>{item.eligibility.safeReasons.map((value) => <p key={value} className="mt-2 text-sm text-slate-700">{reason[value]}</p>)}<p className="mt-3 text-sm text-slate-600">応募期限: {date.format(new Date(item.applicationDeadline))} {time.format(new Date(item.applicationDeadline))} / 現在の残り枠: {item.remainingCapacity} 人</p><WorkerRecruitmentApplicationControls shiftId={item.shiftId} state={item.state} /></section><section className="rounded-xl border border-slate-200 bg-white p-5 sm:p-6"><h2 className="text-lg font-semibold">勤務情報</h2><dl className="mt-5 grid gap-5 sm:grid-cols-2"><Item label="勤務地">{item.workplaceName}<br />{item.workplaceAddress}</Item>{item.meetingAt && <Item label="集合時刻">{date.format(new Date(item.meetingAt))} {time.format(new Date(item.meetingAt))}</Item>}{item.meetingNote && <Item label="集合案内">{item.meetingNote}</Item>}{item.accessNote && <Item label="アクセス">{item.accessNote}</Item>}{item.description && <Item label="仕事内容">{item.description}</Item>}{item.clothingNote && <Item label="服装">{item.clothingNote}</Item>}{item.belongingsNote && <Item label="持ち物">{item.belongingsNote}</Item>}{item.mealNotes && <Item label="食事">{item.mealNotes}</Item>}{item.recruitmentNotes && <Item label="募集補足">{item.recruitmentNotes}</Item>}{manual && <Item label="業務資料"><a className="text-blue-700 underline" href={manual} target="_blank" rel="noreferrer">業務資料を開く</a></Item>}{map && <Item label="地図"><a className="text-blue-700 underline" href={map} target="_blank" rel="noreferrer">地図を開く</a></Item>}</dl></section><section className="rounded-xl border border-slate-200 bg-white p-5 sm:p-6"><h2 className="text-lg font-semibold">条件・報酬</h2><dl className="mt-5 grid gap-5 sm:grid-cols-2"><Item label="時給">{item.hourlyWage == null ? "未設定" : `${item.hourlyWage.toLocaleString("ja-JP")}円`}</Item><Item label="交通費">{item.transportationFeeCap == null ? "未設定" : `上限${item.transportationFeeCap.toLocaleString("ja-JP")}円`}</Item>{item.requirementsText && <Item label="応募条件">{item.requirementsText}</Item>}{item.requirements.length > 0 && <Item label="必要な資格・スキル">{item.requirements.map((r) => r.name).join("、")}</Item>}</dl></section></main>;
+  const manual = safeUrl(item.manualUrl);
+  const map = safeUrl(item.mapUrl);
+  return (
+    <main className={layout}>
+      <Link href="/worker/recruitment" className={link}>募集中の勤務へ戻る</Link>
+      <header className="space-y-1">
+        <p className="break-words text-sm text-foreground-muted">{item.projectName}</p>
+        <h1 className="break-words text-2xl font-semibold">{item.jobName}</h1>
+        <p>{schedule(item)}</p>
+      </header>
+      <section className={card}>
+        <h2 className="mb-3 text-base font-semibold">応募状況</h2>
+        <div className="space-y-4">
+          <ShiftStatus item={item} />
+          <RecruitmentTerms item={item} />
+        </div>
+        <WorkerRecruitmentApplicationControls shiftId={item.shiftId} state={item.state} />
+      </section>
+      <section className={card}>
+        <h2 className="text-lg font-semibold">勤務情報</h2>
+        <dl className="mt-5 grid gap-5 sm:grid-cols-2">
+          <Item label="勤務地">{item.workplaceName}<br />{item.workplaceAddress}</Item>
+          {item.meetingAt && <Item label="集合時刻">{date.format(new Date(item.meetingAt))} {time.format(new Date(item.meetingAt))}</Item>}
+          {item.meetingNote && <Item label="集合案内">{item.meetingNote}</Item>}
+          {item.accessNote && <Item label="アクセス">{item.accessNote}</Item>}
+          {item.description && <Item label="仕事内容">{item.description}</Item>}
+          {item.clothingNote && <Item label="服装">{item.clothingNote}</Item>}
+          {item.belongingsNote && <Item label="持ち物">{item.belongingsNote}</Item>}
+          {item.mealNotes && <Item label="食事">{item.mealNotes}</Item>}
+          {item.recruitmentNotes && <Item label="募集補足">{item.recruitmentNotes}</Item>}
+          {manual && <Item label="業務資料"><a className="text-link underline" href={manual} target="_blank" rel="noreferrer">業務資料を開く</a></Item>}
+          {map && <Item label="地図"><a className="text-link underline" href={map} target="_blank" rel="noreferrer">地図を開く</a></Item>}
+        </dl>
+      </section>
+      <section className={card}>
+        <h2 className="text-lg font-semibold">条件・報酬</h2>
+        <dl className="mt-5 grid gap-5 sm:grid-cols-2">
+          <Item label="時給">{item.hourlyWage == null ? "未設定" : `${item.hourlyWage.toLocaleString("ja-JP")}円`}</Item>
+          <Item label="交通費">{item.transportationFeeCap == null ? "未設定" : `上限${item.transportationFeeCap.toLocaleString("ja-JP")}円`}</Item>
+          {item.requirementsText && <Item label="応募条件">{item.requirementsText}</Item>}
+          {item.requirements.length > 0 && <Item label="必要な資格・スキル">{item.requirements.map((r) => r.name).join("、")}</Item>}
+        </dl>
+      </section>
+    </main>
+  );
 }
-function Item({ label, children }: { label: string; children: React.ReactNode }) { return <div><dt className="text-xs font-semibold text-slate-500">{label}</dt><dd className="mt-1 whitespace-pre-wrap text-slate-900">{children}</dd></div>; }
+
+function Item({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div className="min-w-0">
+      <dt className="text-xs font-semibold text-foreground-muted">{label}</dt>
+      <dd className="mt-1 whitespace-pre-wrap break-words text-foreground">{children}</dd>
+    </div>
+  );
+}
