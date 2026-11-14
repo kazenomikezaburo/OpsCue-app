@@ -16,6 +16,7 @@ const localDevelopmentOrigins = [
 const nextConfig: NextConfig = {
   typescript: { tsconfigPath: "tsconfig.web.json" },
   allowedDevOrigins: localDevelopmentOrigins,
+  devIndicators: false,
 };
 
 export default nextConfig;

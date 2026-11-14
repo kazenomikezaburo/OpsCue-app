@@ -1,0 +1,1006 @@
+{
+ "Description": "OpsCue OCV1-07C2 LINE one-shot delivery foundation (disabled by default)",
+ "Resources": {
+  "DispatcherSecurityGroup2B7D23AB": {
+   "Type": "AWS::EC2::SecurityGroup",
+   "Properties": {
+    "GroupDescription": "No ingress; outbound HTTPS, Supabase session pooler, and VPC DNS only",
+    "SecurityGroupEgress": [
+     {
+      "CidrIp": "0.0.0.0/0",
+      "Description": "LINE and AWS public APIs",
+      "FromPort": 443,
+      "IpProtocol": "tcp",
+      "ToPort": 443
+     },
+     {
+      "CidrIp": "0.0.0.0/0",
+      "Description": "Supabase shared session pooler",
+      "FromPort": 5432,
+      "IpProtocol": "tcp",
+      "ToPort": 5432
+     },
+     {
+      "CidrIp": "172.31.0.0/16",
+      "Description": "VPC DNS UDP",
+      "FromPort": 53,
+      "IpProtocol": "udp",
+      "ToPort": 53
+     },
+     {
+      "CidrIp": "172.31.0.0/16",
+      "Description": "VPC DNS TCP",
+      "FromPort": 53,
+      "IpProtocol": "tcp",
+      "ToPort": 53
+     }
+    ],
+    "VpcId": "vpc-00000000000000000"
+   },
+   "Metadata": {
+    "aws:cdk:path": "OpsCueLineDelivery/DispatcherSecurityGroup/Resource"
+   }
+  },
+  "Repository22E53BBD": {
+   "Type": "AWS::ECR::Repository",
+   "Properties": {
+    "ImageScanningConfiguration": {
+     "ScanOnPush": true
+    },
+    "LifecyclePolicy": {
+     "LifecyclePolicyText": "{\"rules\":[{\"rulePriority\":1,\"description\":\"Retain the latest 20 immutable deployment candidates\",\"selection\":{\"tagStatus\":\"any\",\"countType\":\"imageCountMoreThan\",\"countNumber\":20},\"action\":{\"type\":\"expire\"}}]}"
+    },
+    "RepositoryName": "opscue-line-dispatcher"
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "OpsCueLineDelivery/Repository/Resource"
+   }
+  },
+  "DatabaseUrlSecret": {
+   "Type": "AWS::SecretsManager::Secret",
+   "Properties": {
+    "Description": "Populate after deploy with the dedicated Supabase session-pooler URL; no value is defined by CDK.",
+    "Name": "opscue/prod/dispatcher-database-url"
+   },
+   "Metadata": {
+    "aws:cdk:path": "OpsCueLineDelivery/DatabaseUrlSecret"
+   }
+  },
+  "CanaryDatabaseUrlSecret": {
+   "Type": "AWS::SecretsManager::Secret",
+   "Properties": {
+    "Description": "Populate before a manual canary with the canary-only Supabase session-pooler URL; no value is defined by CDK.",
+    "Name": "opscue/line/canary-dispatcher/database-url"
+   },
+   "Metadata": {
+    "aws:cdk:path": "OpsCueLineDelivery/CanaryDatabaseUrlSecret"
+   }
+  },
+  "MessagingTokenSecret": {
+   "Type": "AWS::SecretsManager::Secret",
+   "Properties": {
+    "Description": "Populate only for the C2-06 canary; no value is defined by CDK.",
+    "Name": "opscue/line/messaging-channel-access-token"
+   },
+   "Metadata": {
+    "aws:cdk:path": "OpsCueLineDelivery/MessagingTokenSecret"
+   }
+  },
+  "CanaryTaskExecutionRoleFC430B16": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "ecs-tasks.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "Description": "Manual canary ECS agent only: pull the exact image, read canary DB and Messaging token secrets, and write logs.",
+    "PermissionsBoundary": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":iam::111111111111:policy/OpsCueCanaryExecutionBoundary"
+      ]
+     ]
+    },
+    "RoleName": "opscue-prod-canary-execution-role"
+   },
+   "Metadata": {
+    "aws:cdk:path": "OpsCueLineDelivery/CanaryTaskExecutionRole/Resource"
+   }
+  },
+  "CanaryTaskExecutionRoleDefaultPolicyE0171C8B": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "ecr:GetAuthorizationToken",
+       "Effect": "Allow",
+       "Resource": "*"
+      },
+      {
+       "Action": [
+        "ecr:BatchCheckLayerAvailability",
+        "ecr:GetDownloadUrlForLayer",
+        "ecr:BatchGetImage"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "Repository22E53BBD",
+         "Arn"
+        ]
+       }
+      },
+      {
+       "Action": [
+        "logs:CreateLogStream",
+        "logs:PutLogEvents"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":logs:ap-northeast-1:111111111111:log-group:/ecs/opscue/prod/dispatcher:*"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": [
+        "secretsmanager:GetSecretValue",
+        "secretsmanager:DescribeSecret"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Ref": "CanaryDatabaseUrlSecret"
+       }
+      },
+      {
+       "Action": [
+        "secretsmanager:GetSecretValue",
+        "secretsmanager:DescribeSecret"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Ref": "MessagingTokenSecret"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "CanaryTaskExecutionRoleDefaultPolicyE0171C8B",
+    "Roles": [
+     {
+      "Ref": "CanaryTaskExecutionRoleFC430B16"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "OpsCueLineDelivery/CanaryTaskExecutionRole/DefaultPolicy/Resource"
+   }
+  },
+  "ClusterEB0386A7": {
+   "Type": "AWS::ECS::Cluster",
+   "Properties": {
+    "ClusterSettings": [
+     {
+      "Name": "containerInsights",
+      "Value": "enabled"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "OpsCueLineDelivery/Cluster/Resource"
+   }
+  },
+  "TaskDefinitionB36D86D9": {
+   "Type": "AWS::ECS::TaskDefinition",
+   "Properties": {
+    "ContainerDefinitions": [
+     {
+      "Environment": [
+       {
+        "Name": "NODE_ENV",
+        "Value": "production"
+       },
+       {
+        "Name": "LINE_DELIVERY_ENABLED",
+        "Value": "false"
+       },
+       {
+        "Name": "LINE_DELIVERY_MODE",
+        "Value": "normal"
+       },
+       {
+        "Name": "LINE_DELIVERY_BATCH_SIZE",
+        "Value": "4"
+       },
+       {
+        "Name": "LINE_PUSH_TIMEOUT_MS",
+        "Value": "8000"
+       },
+       {
+        "Name": "LINE_DISPATCHER_MAX_RUNTIME_MS",
+        "Value": "55000"
+       },
+       {
+        "Name": "OPSCUE_APP_ORIGIN",
+        "Value": "https://replace-before-c2-06.invalid"
+       }
+      ],
+      "Essential": true,
+      "Image": {
+       "Fn::Join": [
+        "",
+        [
+         {
+          "Fn::Select": [
+           4,
+           {
+            "Fn::Split": [
+             ":",
+             {
+              "Fn::GetAtt": [
+               "Repository22E53BBD",
+               "Arn"
+              ]
+             }
+            ]
+           }
+          ]
+         },
+         ".dkr.ecr.",
+         {
+          "Fn::Select": [
+           3,
+           {
+            "Fn::Split": [
+             ":",
+             {
+              "Fn::GetAtt": [
+               "Repository22E53BBD",
+               "Arn"
+              ]
+             }
+            ]
+           }
+          ]
+         },
+         ".",
+         {
+          "Ref": "AWS::URLSuffix"
+         },
+         "/",
+         {
+          "Ref": "Repository22E53BBD"
+         },
+         ":c2-05-placeholder"
+        ]
+       ]
+      },
+      "LogConfiguration": {
+       "LogDriver": "awslogs",
+       "Options": {
+        "awslogs-group": "/ecs/opscue/prod/dispatcher",
+        "awslogs-stream-prefix": "task",
+        "awslogs-region": "ap-northeast-1"
+       }
+      },
+      "Name": "opscue-line-dispatcher",
+      "ReadonlyRootFilesystem": true,
+      "Secrets": [
+       {
+        "Name": "OPSCUE_LINE_DISPATCHER_DATABASE_URL",
+        "ValueFrom": {
+         "Ref": "DatabaseUrlSecret"
+        }
+       },
+       {
+        "Name": "LINE_MESSAGING_CHANNEL_ACCESS_TOKEN",
+        "ValueFrom": {
+         "Ref": "MessagingTokenSecret"
+        }
+       }
+      ],
+      "StopTimeout": 30,
+      "Ulimits": [
+       {
+        "HardLimit": 1024,
+        "Name": "nofile",
+        "SoftLimit": 1024
+       }
+      ]
+     }
+    ],
+    "Cpu": "256",
+    "ExecutionRoleArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":iam::111111111111:role/opscue-dispatcher-execution-role"
+      ]
+     ]
+    },
+    "Family": "OpsCueLineDeliveryTaskDefinitionF859B252",
+    "Memory": "512",
+    "NetworkMode": "awsvpc",
+    "RequiresCompatibilities": [
+     "FARGATE"
+    ],
+    "RuntimePlatform": {
+     "CpuArchitecture": "X86_64",
+     "OperatingSystemFamily": "LINUX"
+    },
+    "TaskRoleArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":iam::111111111111:role/opscue-dispatcher-task-role"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "OpsCueLineDelivery/TaskDefinition/Resource"
+   }
+  },
+  "CanaryTaskDefinition98D27197": {
+   "Type": "AWS::ECS::TaskDefinition",
+   "Properties": {
+    "ContainerDefinitions": [
+     {
+      "Environment": [
+       {
+        "Name": "NODE_ENV",
+        "Value": "production"
+       },
+       {
+        "Name": "LINE_DELIVERY_ENABLED",
+        "Value": "false"
+       },
+       {
+        "Name": "LINE_DELIVERY_MODE",
+        "Value": "canary"
+       },
+       {
+        "Name": "LINE_DELIVERY_BATCH_SIZE",
+        "Value": "1"
+       },
+       {
+        "Name": "LINE_PUSH_TIMEOUT_MS",
+        "Value": "8000"
+       },
+       {
+        "Name": "LINE_DISPATCHER_MAX_RUNTIME_MS",
+        "Value": "55000"
+       },
+       {
+        "Name": "OPSCUE_APP_ORIGIN",
+        "Value": "https://replace-before-c2-06.invalid"
+       }
+      ],
+      "Essential": true,
+      "Image": {
+       "Fn::Join": [
+        "",
+        [
+         {
+          "Fn::Select": [
+           4,
+           {
+            "Fn::Split": [
+             ":",
+             {
+              "Fn::GetAtt": [
+               "Repository22E53BBD",
+               "Arn"
+              ]
+             }
+            ]
+           }
+          ]
+         },
+         ".dkr.ecr.",
+         {
+          "Fn::Select": [
+           3,
+           {
+            "Fn::Split": [
+             ":",
+             {
+              "Fn::GetAtt": [
+               "Repository22E53BBD",
+               "Arn"
+              ]
+             }
+            ]
+           }
+          ]
+         },
+         ".",
+         {
+          "Ref": "AWS::URLSuffix"
+         },
+         "/",
+         {
+          "Ref": "Repository22E53BBD"
+         },
+         ":c2-05-placeholder"
+        ]
+       ]
+      },
+      "LogConfiguration": {
+       "LogDriver": "awslogs",
+       "Options": {
+        "awslogs-group": "/ecs/opscue/prod/dispatcher",
+        "awslogs-stream-prefix": "canary-task",
+        "awslogs-region": "ap-northeast-1"
+       }
+      },
+      "Name": "opscue-line-canary-dispatcher",
+      "ReadonlyRootFilesystem": true,
+      "Secrets": [
+       {
+        "Name": "OPSCUE_LINE_CANARY_DISPATCHER_DATABASE_URL",
+        "ValueFrom": {
+         "Ref": "CanaryDatabaseUrlSecret"
+        }
+       },
+       {
+        "Name": "LINE_MESSAGING_CHANNEL_ACCESS_TOKEN",
+        "ValueFrom": {
+         "Ref": "MessagingTokenSecret"
+        }
+       }
+      ],
+      "StopTimeout": 30,
+      "Ulimits": [
+       {
+        "HardLimit": 1024,
+        "Name": "nofile",
+        "SoftLimit": 1024
+       }
+      ]
+     }
+    ],
+    "Cpu": "256",
+    "ExecutionRoleArn": {
+     "Fn::GetAtt": [
+      "CanaryTaskExecutionRoleFC430B16",
+      "Arn"
+     ]
+    },
+    "Family": "OpsCueLineDeliveryCanaryTaskDefinition117ED4F7",
+    "Memory": "512",
+    "NetworkMode": "awsvpc",
+    "RequiresCompatibilities": [
+     "FARGATE"
+    ],
+    "RuntimePlatform": {
+     "CpuArchitecture": "X86_64",
+     "OperatingSystemFamily": "LINUX"
+    },
+    "TaskRoleArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":iam::111111111111:role/opscue-dispatcher-task-role"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "OpsCueLineDelivery/CanaryTaskDefinition/Resource"
+   }
+  },
+  "ScheduleGroup": {
+   "Type": "AWS::Scheduler::ScheduleGroup",
+   "Properties": {
+    "Name": "opscue-line-delivery"
+   },
+   "Metadata": {
+    "aws:cdk:path": "OpsCueLineDelivery/ScheduleGroup"
+   }
+  },
+  "SchedulerRole59E73443": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Condition": {
+        "StringEquals": {
+         "aws:SourceAccount": "111111111111"
+        },
+        "ArnEquals": {
+         "aws:SourceArn": {
+          "Fn::GetAtt": [
+           "ScheduleGroup",
+           "Arn"
+          ]
+         }
+        }
+       },
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "scheduler.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "Description": "EventBridge Scheduler may run only this task definition on this cluster.",
+    "PermissionsBoundary": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":iam::111111111111:policy/OpsCueSchedulerBoundary"
+      ]
+     ]
+    },
+    "RoleName": "opscue-prod-line-scheduler-role"
+   },
+   "Metadata": {
+    "aws:cdk:path": "OpsCueLineDelivery/SchedulerRole/Resource"
+   }
+  },
+  "SchedulerRoleDefaultPolicy66F774B8": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "ecs:RunTask",
+       "Condition": {
+        "ArnEquals": {
+         "ecs:cluster": {
+          "Fn::GetAtt": [
+           "ClusterEB0386A7",
+           "Arn"
+          ]
+         }
+        }
+       },
+       "Effect": "Allow",
+       "Resource": {
+        "Ref": "TaskDefinitionB36D86D9"
+       }
+      },
+      {
+       "Action": "iam:PassRole",
+       "Condition": {
+        "StringEquals": {
+         "iam:PassedToService": "ecs-tasks.amazonaws.com"
+        }
+       },
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":iam::111111111111:role/opscue-dispatcher-execution-role"
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":iam::111111111111:role/opscue-dispatcher-task-role"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "SchedulerRoleDefaultPolicy66F774B8",
+    "Roles": [
+     {
+      "Ref": "SchedulerRole59E73443"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "OpsCueLineDelivery/SchedulerRole/DefaultPolicy/Resource"
+   }
+  },
+  "Schedule": {
+   "Type": "AWS::Scheduler::Schedule",
+   "Properties": {
+    "FlexibleTimeWindow": {
+     "Mode": "OFF"
+    },
+    "GroupName": "opscue-line-delivery",
+    "Name": "opscue-line-delivery-every-minute",
+    "ScheduleExpression": "rate(1 minute)",
+    "State": "DISABLED",
+    "Target": {
+     "Arn": {
+      "Fn::GetAtt": [
+       "ClusterEB0386A7",
+       "Arn"
+      ]
+     },
+     "EcsParameters": {
+      "EnableECSManagedTags": true,
+      "LaunchType": "FARGATE",
+      "NetworkConfiguration": {
+       "AwsvpcConfiguration": {
+        "AssignPublicIp": "ENABLED",
+        "SecurityGroups": [
+         {
+          "Fn::GetAtt": [
+           "DispatcherSecurityGroup2B7D23AB",
+           "GroupId"
+          ]
+         }
+        ],
+        "Subnets": [
+         "subnet-00000000000000001",
+         "subnet-00000000000000002",
+         "subnet-00000000000000003"
+        ]
+       }
+      },
+      "PlatformVersion": "LATEST",
+      "TaskCount": 1,
+      "TaskDefinitionArn": {
+       "Ref": "TaskDefinitionB36D86D9"
+      }
+     },
+     "RetryPolicy": {
+      "MaximumEventAgeInSeconds": 120,
+      "MaximumRetryAttempts": 1
+     },
+     "RoleArn": {
+      "Fn::GetAtt": [
+       "SchedulerRole59E73443",
+       "Arn"
+      ]
+     }
+    }
+   },
+   "DependsOn": [
+    "ScheduleGroup"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "OpsCueLineDelivery/Schedule"
+   }
+  },
+  "ProviderAuthMetric8C7D3D82": {
+   "Type": "AWS::Logs::MetricFilter",
+   "Properties": {
+    "FilterPattern": "{ $.event = \"line_dispatcher_complete\" && $.providerAuthFailure = true }",
+    "LogGroupName": "/ecs/opscue/prod/dispatcher",
+    "MetricTransformations": [
+     {
+      "DefaultValue": 0,
+      "MetricName": "ProviderAuthFailure",
+      "MetricNamespace": "OpsCue/LineDelivery",
+      "MetricValue": "1"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "OpsCueLineDelivery/ProviderAuthMetric/Resource"
+   }
+  },
+  "ProviderAuthAlarm225A9D6C": {
+   "Type": "AWS::CloudWatch::Alarm",
+   "Properties": {
+    "AlarmActions": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":sns:ap-northeast-1:111111111111:opscue-operations-alerts"
+       ]
+      ]
+     }
+    ],
+    "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+    "EvaluationPeriods": 1,
+    "MetricName": "ProviderAuthFailure",
+    "Namespace": "OpsCue/LineDelivery",
+    "Period": 60,
+    "Statistic": "Sum",
+    "Threshold": 1,
+    "TreatMissingData": "notBreaching"
+   },
+   "Metadata": {
+    "aws:cdk:path": "OpsCueLineDelivery/ProviderAuthAlarm/Resource"
+   }
+  },
+  "FailureMetric14B2508B": {
+   "Type": "AWS::Logs::MetricFilter",
+   "Properties": {
+    "FilterPattern": "{ $.event = \"line_dispatcher_complete\" && $.dispatcherMode = \"normal\" && $.outcome = \"failed\" }",
+    "LogGroupName": "/ecs/opscue/prod/dispatcher",
+    "MetricTransformations": [
+     {
+      "DefaultValue": 0,
+      "MetricName": "DispatcherFailure",
+      "MetricNamespace": "OpsCue/LineDelivery",
+      "MetricValue": "1"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "OpsCueLineDelivery/FailureMetric/Resource"
+   }
+  },
+  "ConsecutiveFailureAlarm802095BD": {
+   "Type": "AWS::CloudWatch::Alarm",
+   "Properties": {
+    "AlarmActions": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":sns:ap-northeast-1:111111111111:opscue-operations-alerts"
+       ]
+      ]
+     }
+    ],
+    "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+    "DatapointsToAlarm": 3,
+    "EvaluationPeriods": 3,
+    "MetricName": "DispatcherFailure",
+    "Namespace": "OpsCue/LineDelivery",
+    "Period": 60,
+    "Statistic": "Sum",
+    "Threshold": 1,
+    "TreatMissingData": "notBreaching"
+   },
+   "Metadata": {
+    "aws:cdk:path": "OpsCueLineDelivery/ConsecutiveFailureAlarm/Resource"
+   }
+  },
+  "TargetErrorCountAlarm0098D9FD": {
+   "Type": "AWS::CloudWatch::Alarm",
+   "Properties": {
+    "AlarmActions": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":sns:ap-northeast-1:111111111111:opscue-operations-alerts"
+       ]
+      ]
+     }
+    ],
+    "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+    "Dimensions": [
+     {
+      "Name": "ScheduleGroup",
+      "Value": "opscue-line-delivery"
+     }
+    ],
+    "EvaluationPeriods": 1,
+    "MetricName": "TargetErrorCount",
+    "Namespace": "AWS/Scheduler",
+    "Period": 60,
+    "Statistic": "Sum",
+    "Threshold": 1,
+    "TreatMissingData": "notBreaching"
+   },
+   "Metadata": {
+    "aws:cdk:path": "OpsCueLineDelivery/TargetErrorCountAlarm/Resource"
+   }
+  },
+  "InvocationDroppedCountAlarm4DEF020A": {
+   "Type": "AWS::CloudWatch::Alarm",
+   "Properties": {
+    "AlarmActions": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":sns:ap-northeast-1:111111111111:opscue-operations-alerts"
+       ]
+      ]
+     }
+    ],
+    "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+    "Dimensions": [
+     {
+      "Name": "ScheduleGroup",
+      "Value": "opscue-line-delivery"
+     }
+    ],
+    "EvaluationPeriods": 1,
+    "MetricName": "InvocationDroppedCount",
+    "Namespace": "AWS/Scheduler",
+    "Period": 60,
+    "Statistic": "Sum",
+    "Threshold": 1,
+    "TreatMissingData": "notBreaching"
+   },
+   "Metadata": {
+    "aws:cdk:path": "OpsCueLineDelivery/InvocationDroppedCountAlarm/Resource"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/12PT08CMRDFPwv3MsLG6FkxcDKahbup3QGG7babmamENP3upoBBPc17v7z510DzOIfZxB5l6rp+6ukT8lqt602LEhM7NPYoHxldA3mNLjHpacUxjWaxDX9AMegYcotjFNLIp5q4uWIkCGziSO7ZChpBx6gy2GB3yHCZxqiG7AC5jR7P/bW+R0/uPO6i6iaBvPBJFLnyH7m0vLOKGyv9C24pkFIMNfCfxKCWAvKNFSNuj13yyJDrNVd3e/YKivFxJ5BfUZnckvz1ht++GOdj6o5W3R7yk7c81MhZlFLlW9IxaTEhdggHuftq7mH+ALPJQYimnILSgNBe6jdJwb3tpwEAAA=="
+   },
+   "Metadata": {
+    "aws:cdk:path": "OpsCueLineDelivery/CDKMetadata/Default"
+   }
+  }
+ },
+ "Outputs": {
+  "RepositoryUri": {
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      {
+       "Fn::Select": [
+        4,
+        {
+         "Fn::Split": [
+          ":",
+          {
+           "Fn::GetAtt": [
+            "Repository22E53BBD",
+            "Arn"
+           ]
+          }
+         ]
+        }
+       ]
+      },
+      ".dkr.ecr.",
+      {
+       "Fn::Select": [
+        3,
+        {
+         "Fn::Split": [
+          ":",
+          {
+           "Fn::GetAtt": [
+            "Repository22E53BBD",
+            "Arn"
+           ]
+          }
+         ]
+        }
+       ]
+      },
+      ".",
+      {
+       "Ref": "AWS::URLSuffix"
+      },
+      "/",
+      {
+       "Ref": "Repository22E53BBD"
+      }
+     ]
+    ]
+   }
+  },
+  "ScheduleName": {
+   "Value": "opscue-line-delivery-every-minute"
+  },
+  "DatabaseSecretArn": {
+   "Value": {
+    "Ref": "DatabaseUrlSecret"
+   }
+  },
+  "CanaryDatabaseSecretArn": {
+   "Value": {
+    "Ref": "CanaryDatabaseUrlSecret"
+   }
+  },
+  "CanaryTaskDefinitionArn": {
+   "Value": {
+    "Ref": "CanaryTaskDefinition98D27197"
+   }
+  },
+  "MessagingTokenSecretArn": {
+   "Value": {
+    "Ref": "MessagingTokenSecret"
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

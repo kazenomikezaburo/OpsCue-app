@@ -1,0 +1,21 @@
+{
+  "version": "54.0.0",
+  "files": {
+    "c213bc2bc6a21d03e28f66733f9f6bbd040f2b7ac03b1bddf81cefb9055d951f": {
+      "displayName": "OpsCueLineDelivery Template",
+      "source": {
+        "path": "OpsCueLineDelivery.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "111111111111-ap-northeast-1-f367c1aa": {
+          "bucketName": "cdk-hnb659fds-assets-111111111111-ap-northeast-1",
+          "objectKey": "c213bc2bc6a21d03e28f66733f9f6bbd040f2b7ac03b1bddf81cefb9055d951f.json",
+          "region": "ap-northeast-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::111111111111:role/cdk-hnb659fds-file-publishing-role-111111111111-ap-northeast-1"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}
