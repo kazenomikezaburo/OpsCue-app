@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import test from "node:test";
 import vm from "node:vm";
-import { createElement } from "react";
+import { Children, createElement, isValidElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import ts from "typescript";
 
@@ -73,4 +73,52 @@ test("empty, loading and failed reads have distinct accessible states", () => {
   assert.match(error, /role="alert"/);
   assert.match(error, /再確認/);
   assert.doesNotMatch(error, /未応募|募集中の勤務はありません/);
+});
+
+test("Next supplies retry and the recruitment recheck button refreshes then calls reset", () => {
+  // Next 16.4.2 supports both props; retry is the documented recovery operation
+  // and invokes refresh + reset. Run the installed boundary, not a re-created
+  // implementation or a retry mock that assumes this contract.
+  const { ErrorBoundaryHandler } = require("next/dist/client/components/error-boundary");
+  const RecruitmentError = loadComponent("app/worker/recruitment/error.tsx", {
+    "@/components/worker/recruitment/recruitment-state": loadComponent(componentRoot + "recruitment-state.tsx"),
+  }).default;
+  const recovered = createElement("p", null, "Recovered recruitment view");
+  const boundary = new ErrorBoundaryHandler({
+    pathname: "/worker/recruitment", errorComponent: RecruitmentError, children: recovered,
+  });
+  const error = new Error("Private diagnostic must not be exposed");
+  boundary.state = { ...boundary.state, ...ErrorBoundaryHandler.getDerivedStateFromError(error) };
+
+  // Only the router transport and React's mounted setState delivery are stubbed.
+  // No actual router, Server Action, Auth, DB or network connection is used.
+  const calls = [];
+  boundary.context = { refresh() { calls.push("refresh"); } };
+  boundary.setState = (update) => { boundary.state = { ...boundary.state, ...update }; };
+  const reset = boundary.reset;
+  boundary.reset = () => { calls.push("reset"); reset(); };
+  const fallback = Children.toArray(boundary.render().props.children)
+    .find((child) => isValidElement(child) && child.type === RecruitmentError);
+  assert.ok(fallback, "Next must render the actual recruitment error component");
+  assert.equal(fallback.props.retry, boundary.retry);
+  assert.equal(fallback.props.reset, boundary.reset);
+  const html = renderToStaticMarkup(fallback);
+  assert.match(html, /role="alert"/);
+  assert.match(html, /<button[^>]*>再確認<\/button>/);
+  assert.doesNotMatch(html, /Private diagnostic|未応募|募集中の勤務はありません/);
+
+  // Traverse the actual route and actual RecruitmentState JSX to click its
+  // rendered button. Do not call the recovery prop directly from the test.
+  const main = fallback.type(fallback.props);
+  const state = main.props.children;
+  const panel = state.type(state.props);
+  const button = Children.toArray(panel.props.children)
+    .find((child) => isValidElement(child) && child.type === "button");
+  assert.ok(button, "The retry prop supplied by Next must make the button visible");
+  assert.equal(button.props.children, "再確認");
+  assert.deepEqual(calls, [], "Rendering must not initiate recovery");
+  button.props.onClick();
+  assert.deepEqual(calls, ["refresh", "reset"]);
+  assert.equal(boundary.state.error, null);
+  assert.equal(boundary.render(), recovered);
 });
