@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { projectRecruitmentDetailSchema, projectRecruitmentSummarySchema, recruitmentUuidSchema } from "./project-recruitment-schema";
+import { projectRecruitmentDetailSchema, projectRecruitmentSummarySchema, recruitmentInstantSchema, recruitmentUuidSchema } from "./project-recruitment-schema";
 import type { ProjectRecruitmentDetailDTO } from "./project-recruitment-types";
 
 /** Frontend view models only. These do not specify Backend DTOs or RPCs. */
@@ -10,6 +10,13 @@ const projectCardSchema = z.object({
   publishedShiftCount: z.number().int().nonnegative().nullable(),
   applyAllowedShiftCount: z.number().int().nonnegative().nullable(),
   hourlyWage: z.number().nonnegative().nullable(),
+  // Optional additions preserve the existing synthetic reader contract.
+  hourlyWageMin: z.number().nonnegative().nullable().optional(),
+  hourlyWageMax: z.number().nonnegative().nullable().optional(),
+  appliedShiftCount: z.number().int().nonnegative().nullable().optional(),
+  firstStartsAt: recruitmentInstantSchema.nullable().optional(),
+  lastEndsAt: recruitmentInstantSchema.nullable().optional(),
+  nearestApplicationDeadline: recruitmentInstantSchema.nullable().optional(),
 }).strict();
 const listViewSchema = z.object({
   source: z.enum(["synthetic", "backend-proposal"]),
@@ -62,4 +69,16 @@ export async function readProjectRecruitmentDetail(
   } catch {
     return { status: "error" };
   }
+}
+
+/** Range-aware presentation; a missing bound never becomes a single wage. */
+export function formatProjectHourlyWage(item: RecruitmentProjectCardItem): string {
+  const min = item.hourlyWageMin ?? null;
+  const max = item.hourlyWageMax ?? null;
+  const yen = (value: number) => value.toLocaleString("ja-JP");
+  if (min !== null && max !== null) return min === max
+    ? `時給 ${yen(min)}円` : `時給 ${yen(min)}〜${yen(max)}円`;
+  if (min !== null) return `時給 ${yen(min)}円〜（上限確認中）`;
+  if (max !== null) return `時給 上限${yen(max)}円（下限確認中）`;
+  return item.hourlyWage === null ? "時給は確認中" : `時給 ${yen(item.hourlyWage)}円`;
 }

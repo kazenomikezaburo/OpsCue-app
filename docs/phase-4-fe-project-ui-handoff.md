@@ -123,3 +123,10 @@ Consoleへの寸法取得コード貼り付けはChromeの保護機能に遮断�
   実DB・実Auth・LINE・AWSの接続操作なし。検証専用タブと今回のPreviewだけを終了した。
 
 Backend未確定部分のBLOCKEDは上記のまま維持する。
+
+## Phase 4-FE-2追補
+
+#20の確認済みDTO・ページングに対するモックadapterを追加した。
+上記の「確定DTO到着待ち」の一部はモック範囲で解消済み。
+実接続、日付filter、応募可能数、独立した応募可否、一括応募/結果照会は引き続きBLOCKED。
+最新の対応範囲・接続条件は[Phase 4-FE-2引継ぎ](phase-4-fe-2-backend-adapter-handoff.md)を参照。
