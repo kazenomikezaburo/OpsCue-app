@@ -6,13 +6,13 @@ import vm from "node:vm";
 import ts from "typescript";
 
 const require = createRequire(import.meta.url);
-function load(relative, resolve) {
+function load(relative, resolve, browser) {
   const source = readFileSync(new URL("../../" + relative, import.meta.url), "utf8");
   const { outputText } = ts.transpileModule(source, {
     compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022, jsx: ts.JsxEmit.ReactJSX },
   });
   const exports = {};
-  vm.runInNewContext(outputText, { exports, require: resolve });
+  vm.runInNewContext(outputText, { exports, require: resolve, window: browser });
   return exports;
 }
 
@@ -21,6 +21,26 @@ function load(relative, resolve) {
 function harness() {
   const slots = [], effects = [];
   let cursor = 0, tree;
+  const listeners = new Set();
+  const entries = [{ __NA: true, tree: "next-metadata" }];
+  let entryIndex = 0;
+  function travel(delta) {
+    const nextIndex = entryIndex + delta;
+    if (nextIndex < 0 || nextIndex >= entries.length) return;
+    entryIndex = nextIndex;
+    for (const listener of listeners) listener({ state: entries[entryIndex] });
+  }
+  const browser = {
+    history: {
+      get state() { return entries[entryIndex]; },
+      replaceState(state) { entries[entryIndex] = state; },
+      pushState(state) { entries.splice(++entryIndex, entries.length, state); },
+      back() { travel(-1); },
+      forward() { travel(1); },
+    },
+    addEventListener(name, listener) { assert.equal(name, "popstate"); listeners.add(listener); },
+    removeEventListener(name, listener) { assert.equal(name, "popstate"); listeners.delete(listener); },
+  };
   const hooks = {
     useState(initial) {
       const i = cursor++;
@@ -48,12 +68,12 @@ function harness() {
     if (name === "react") return hooks;
     if (name === "react/jsx-runtime") return { jsx: (type, props) => ({ type, props }), jsxs: (type, props) => ({ type, props }) };
     if (name.startsWith("@/lib/")) return require("../../" + name.slice(2));
-    if (name === "./use-project-recruitment-read") return load("components/worker/recruitment/use-project-recruitment-read.ts", resolve);
+    if (name === "./use-project-recruitment-read") return load("components/worker/recruitment/use-project-recruitment-read.ts", resolve, browser);
     if (name === "./recruitment-shift-row") return { getRecruitmentShiftHoldReason: (shift) => shift.applicationAvailability === "allowed" && shift.hasActiveApplication === false ? null : "hold" };
     if (name.startsWith("./")) return Object.fromEntries(components.map((component) => [component, component]));
     throw new Error("Unexpected demo boundary: " + name);
   };
-  const { RecruitmentDemo } = load("components/worker/recruitment/recruitment-demo.tsx", resolve);
+  const { RecruitmentDemo } = load("components/worker/recruitment/recruitment-demo.tsx", resolve, browser);
   function render() {
     cursor = 0; tree = RecruitmentDemo({ isDemo: true });
     while (effects.length) effects.shift()();
@@ -66,6 +86,7 @@ function harness() {
   function find(type) { const found = flatten(tree).find((node) => node.type === type); assert.ok(found, type); return found.props; }
   return {
     find,
+    browser,
     async settle() {
       // Reader + validation + state delivery span multiple microtasks.
       for (let i = 0; i < 8; i++) { await Promise.resolve(); render(); }
@@ -111,6 +132,28 @@ test("demo traverses same-name projects, resets cross-project selection and reta
   result.onClose(); view.render();
   view.find("ProjectRecruitmentDetail").onConfirm(); view.render();
   assert.equal(view.find("RecruitmentBatchResult").result.request.batchKey, batchKey);
+});
+
+test("browser back/forward restores the correct project and preserves Next history metadata", async () => {
+  const view = harness(); view.render(); await view.settle();
+  let list = view.find("ProjectRecruitmentList");
+  list.loadMore.onLoadMore(); view.render();
+  list = view.find("ProjectRecruitmentList");
+  const [first, second] = list.items.map((item) => item.project.projectId);
+  list.onOpenDetail(first); view.render(); await view.settle();
+  const shift = view.find("ProjectRecruitmentDetail").detail.shifts[0];
+  view.find("ProjectRecruitmentDetail").onSelectionChange([{ projectId: shift.projectId, shiftId: shift.shiftId }]); view.render();
+  view.browser.history.back(); view.render(); await view.settle();
+  assert.equal(view.find("ProjectRecruitmentList").items.length, 2);
+  view.browser.history.forward(); view.render(); await view.settle();
+  assert.equal(view.find("ProjectRecruitmentDetail").detail.project.projectId, first);
+  assert.equal(view.find("ProjectRecruitmentDetail").selection.length, 1);
+  view.find("ProjectRecruitmentDetail").onBack(); view.render(); await view.settle();
+  view.find("ProjectRecruitmentList").onOpenDetail(second); view.render(); await view.settle();
+  assert.equal(view.find("ProjectRecruitmentDetail").detail.project.projectId, second);
+  assert.equal(view.find("ProjectRecruitmentDetail").selection.length, 0);
+  assert.equal(view.browser.history.state.__NA, true);
+  assert.equal(view.browser.history.state.tree, "next-metadata");
 });
 
 test("demo obtains error/empty/404 through the reader and retries to ready", async () => {

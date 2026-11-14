@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import type { RecruitmentBatchResultDTO, RecruitmentSelection } from "@/lib/worker/recruitment/project-recruitment-types";
-import { normalizeRecruitmentUuid, recruitmentBatchRequestSchema } from "@/lib/worker/recruitment/project-recruitment-schema";
+import { normalizeRecruitmentUuid, recruitmentBatchRequestSchema, recruitmentUuidSchema } from "@/lib/worker/recruitment/project-recruitment-schema";
 import { canSubmitRecruitmentSelection } from "@/lib/worker/recruitment/recruitment-selection";
 import { createSyntheticDemoRequest, createSyntheticDemoResult, syntheticDemoPageSize } from "@/lib/worker/recruitment/__fixtures__/project-recruitment.fixture";
 import { createSyntheticProjectRecruitmentReader } from "@/lib/worker/recruitment/__fixtures__/project-recruitment-reader.fixture";
@@ -18,6 +18,23 @@ import { RecruitmentState } from "./recruitment-state";
 export type RecruitmentDemoProps = { isDemo: true };
 type DemoDisplay = "ready" | "loading" | "empty" | "error" | "not_found";
 const firstPage = { page: 0, cursor: syntheticDemoPageSize, loadedPages: [0] };
+const historyProjectKey = "opscueRecruitmentDemoProjectId";
+
+function readHistoryProject(state: unknown): string | null {
+  if (state === null || typeof state !== "object" || !(historyProjectKey in state)) return null;
+  const parsed = recruitmentUuidSchema.safeParse(state[historyProjectKey]);
+  return parsed.success ? parsed.data : null;
+}
+
+function writeHistoryProject(projectId: string | null, replace = false) {
+  // Keep Next's own history metadata intact. Demo navigation does not invent a
+  // production URL, fetch data or create an application request.
+  const previous: unknown = window.history.state;
+  const state = previous !== null && typeof previous === "object" ? previous : {};
+  const next = { ...state, [historyProjectKey]: projectId };
+  if (replace) window.history.replaceState(next, "");
+  else window.history.pushState(next, "");
+}
 
 /** UI-only demo composition. Reads go through a synthetic lib adapter. */
 export function RecruitmentDemo({ isDemo }: RecruitmentDemoProps) {
@@ -45,13 +62,30 @@ export function RecruitmentDemo({ isDemo }: RecruitmentDemoProps) {
   const detail = detailStatus === "ready" && detailRead.result?.status === "ready" ? detailRead.result.data : null;
   const unresolved = result?.status === "unknown" || result?.status === "pending";
 
+  useEffect(() => {
+    writeHistoryProject(null, true);
+    function restoreNavigation(event: PopStateEvent) {
+      const nextProjectId = readHistoryProject(event.state);
+      setSheetOpen(false);
+      setDisplay("ready");
+      setNotice(null);
+      setScreen(nextProjectId === null ? "list" : "detail");
+      if (nextProjectId !== null) {
+        setProjectId(nextProjectId);
+        setSelection((current) => current.filter((reference) => normalizeRecruitmentUuid(reference.projectId) === nextProjectId));
+      }
+    }
+    window.addEventListener("popstate", restoreNavigation);
+    return () => window.removeEventListener("popstate", restoreNavigation);
+  }, []);
+
   // The native close event follows the Sheet's focus/scroll cleanup.
   // Advance from that event so the result heading receives focus last.
   function showQueuedResult() {
     if (!queuedResult) return;
     setResult(queuedResult);
     setQueuedResult(null);
-    setScreen("result");
+    setScreen(readHistoryProject(window.history.state) === null ? "list" : "result");
   }
   useEffect(() => { focusTarget.current?.focus(); }, [screen, projectId]);
 
@@ -59,11 +93,18 @@ export function RecruitmentDemo({ isDemo }: RecruitmentDemoProps) {
 
   function openDetail(nextProjectId: string) {
     const normalizedId = normalizeRecruitmentUuid(nextProjectId);
+    if (readHistoryProject(window.history.state) === null) writeHistoryProject(normalizedId);
     if (projectId !== normalizedId) setSelection([]);
     setProjectId(normalizedId);
     setDisplay("ready");
     setNotice(null);
     setScreen("detail");
+  }
+
+  function backToList() {
+    setScreen("list");
+    setDisplay("ready");
+    if (readHistoryProject(window.history.state) !== null) window.history.back();
   }
 
   function openSheet() {
@@ -114,7 +155,7 @@ export function RecruitmentDemo({ isDemo }: RecruitmentDemoProps) {
       </> : screen === "detail" ? <>
         <ProjectRecruitmentDetail key={projectId} detail={detail}
           status={detailStatus} selection={selection}
-          onSelectionChange={setSelection} onBack={() => { setScreen("list"); setDisplay("ready"); }}
+          onSelectionChange={setSelection} onBack={backToList}
           onConfirm={openSheet} onRetry={() => { setDisplay("ready"); detailRead.retry(); }} />
       </> : result ? <div className="mx-auto max-w-3xl space-y-4 p-4 sm:p-8">
         <fieldset className="flex flex-wrap gap-2"><legend className="mb-2 text-sm font-semibold">手動の模擬結果切り替え（同じリクエスト）</legend>
