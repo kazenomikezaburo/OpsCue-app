@@ -85,7 +85,7 @@ export class OpsCueLineDeliveryStack extends cdk.Stack {
     const taskRole = iam.Role.fromRoleArn(this, "TaskRole", this.formatArn({
       service: "iam", region: "", resource: "role", resourceName: "opscue-dispatcher-task-role",
     }), { mutable: false, addGrantsToResources: false });
-    const cluster = new ecs.Cluster(this, "Cluster", { vpc, containerInsightsV2: ecs.ContainerInsights.ENABLED });
+    const cluster = new ecs.Cluster(this, "Cluster", { vpc, containerInsightsV2: ecs.ContainerInsights.ENABLED, clusterName: "OpsCueLineDelivery-Cluster" });
     const taskDefinition = new ecs.FargateTaskDefinition(this, "TaskDefinition", {
       cpu: 256,
       memoryLimitMiB: 512,
@@ -208,6 +208,7 @@ export class OpsCueLineDeliveryStack extends cdk.Stack {
       defaultValue: 0,
     }).metric({ period: cdk.Duration.minutes(1), statistic: "Sum" });
     const providerAuthAlarm = new cloudwatch.Alarm(this, "ProviderAuthAlarm", {
+      alarmName: "OpsCueLineDelivery-ProviderAuthAlarm",
       metric: authMetric,
       threshold: 1,
       evaluationPeriods: 1,
@@ -225,6 +226,7 @@ export class OpsCueLineDeliveryStack extends cdk.Stack {
       defaultValue: 0,
     }).metric({ period: cdk.Duration.minutes(1), statistic: "Sum" });
     const consecutiveFailureAlarm = new cloudwatch.Alarm(this, "ConsecutiveFailureAlarm", {
+      alarmName: "OpsCueLineDelivery-ConsecutiveFailureAlarm",
       metric: failureMetric,
       threshold: 1,
       evaluationPeriods: 3,
@@ -236,6 +238,7 @@ export class OpsCueLineDeliveryStack extends cdk.Stack {
 
     for (const metricName of ["TargetErrorCount", "InvocationDroppedCount"] as const) {
       const alarm = new cloudwatch.Alarm(this, `${metricName}Alarm`, {
+        alarmName: `OpsCueLineDelivery-${metricName}Alarm`,
         metric: new cloudwatch.Metric({
           namespace: "AWS/Scheduler",
           metricName,
