@@ -1,12 +1,14 @@
 "use client";
 
-import { useEffect, useId, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import type { RecruitmentBatchResultDTO, RecruitmentSelection } from "@/lib/worker/recruitment/project-recruitment-types";
 import { normalizeRecruitmentUuid, recruitmentBatchRequestSchema } from "@/lib/worker/recruitment/project-recruitment-schema";
-import { canSubmitRecruitmentSelection, filterRecruitmentShiftsByStartDate, getRecruitmentStartDate } from "@/lib/worker/recruitment/recruitment-selection";
-import { createSyntheticDemoRequest, createSyntheticDemoResult, syntheticDemoDetails, syntheticDemoPageSize } from "@/lib/worker/recruitment/__fixtures__/project-recruitment.fixture";
+import { canSubmitRecruitmentSelection } from "@/lib/worker/recruitment/recruitment-selection";
+import { createSyntheticDemoRequest, createSyntheticDemoResult, syntheticDemoPageSize } from "@/lib/worker/recruitment/__fixtures__/project-recruitment.fixture";
+import { createSyntheticProjectRecruitmentReader } from "@/lib/worker/recruitment/__fixtures__/project-recruitment-reader.fixture";
+import { readProjectRecruitmentDetail, readProjectRecruitmentList } from "@/lib/worker/recruitment/project-recruitment-reader";
+import { useProjectRecruitmentRead } from "./use-project-recruitment-read";
 import { ProjectRecruitmentList } from "./project-recruitment-list";
-import type { RecruitmentProjectCardItem } from "./recruitment-project-card";
 import { ProjectRecruitmentDetail } from "./project-recruitment-detail";
 import { getRecruitmentShiftHoldReason } from "./recruitment-shift-row";
 import { RecruitmentApplicationSheet } from "./recruitment-application-sheet";
@@ -14,10 +16,10 @@ import { RecruitmentBatchResult } from "./recruitment-batch-result";
 import { RecruitmentState } from "./recruitment-state";
 
 export type RecruitmentDemoProps = { isDemo: true };
-type DemoDisplay = "ready" | "loading" | "empty" | "error";
+type DemoDisplay = "ready" | "loading" | "empty" | "error" | "not_found";
 const firstPage = { page: 0, cursor: syntheticDemoPageSize, loadedPages: [0] };
 
-/** Unmounted demo composition: no route, Provider, API, timers or persistence. */
+/** UI-only demo composition. Reads go through a synthetic lib adapter. */
 export function RecruitmentDemo({ isDemo }: RecruitmentDemoProps) {
   const [screen, setScreen] = useState<"list" | "detail" | "result">("list");
   const [projectId, setProjectId] = useState<string | null>(null);
@@ -32,7 +34,15 @@ export function RecruitmentDemo({ isDemo }: RecruitmentDemoProps) {
   const sequence = useRef(0);
   const focusTarget = useRef<HTMLHeadingElement>(null);
   const id = useId();
-  const detail = syntheticDemoDetails.find((item) => item.project.projectId === projectId) ?? null;
+  const reader = useMemo(() => createSyntheticProjectRecruitmentReader(display === "loading" ? "ready" : display), [display]);
+  const readList = useCallback(() => readProjectRecruitmentList(reader, date), [reader, date]);
+  const readDetail = useCallback(() => readProjectRecruitmentDetail(reader, projectId ?? ""), [reader, projectId]);
+  const listRead = useProjectRecruitmentRead(readList);
+  const detailRead = useProjectRecruitmentRead(readDetail);
+  const listStatus = display === "loading" || listRead.result === null ? "loading" : listRead.result.status;
+  const detailStatus = display === "loading" || detailRead.result === null ? "loading" : detailRead.result.status;
+  const list = listRead.result?.status === "ready" ? listRead.result.data : null;
+  const detail = detailStatus === "ready" && detailRead.result?.status === "ready" ? detailRead.result.data : null;
   const unresolved = result?.status === "unknown" || result?.status === "pending";
 
   // The native close event follows the Sheet's focus/scroll cleanup.
@@ -45,28 +55,12 @@ export function RecruitmentDemo({ isDemo }: RecruitmentDemoProps) {
   }
   useEffect(() => { focusTarget.current?.focus(); }, [screen, projectId]);
 
-  const dates = [...new Set(syntheticDemoDetails.flatMap((item) => item.shifts.map((shift) => getRecruitmentStartDate(shift.startsAt))).filter((day): day is string => day !== null))];
-  const cards: RecruitmentProjectCardItem[] = syntheticDemoDetails.flatMap((item) => {
-    const shifts = filterRecruitmentShiftsByStartDate(item.shifts, date);
-    if (shifts.length === 0) return [];
-    const venues = [...new Set(shifts.map((shift) => shift.workplaceName))];
-    const days = [...new Set(shifts.map((shift) => getRecruitmentStartDate(shift.startsAt)))];
-    const wages = [...new Set(shifts.map((shift) => shift.hourlyWage))];
-    // Complete synthetic set only. This is not a production aggregate contract.
-    const availabilityKnown = shifts.every((shift) => shift.applicationAvailability !== null && shift.hasActiveApplication !== null);
-    return [{
-      project: item.project,
-      venueText: venues.some((venue) => venue === null) ? null : venues.join("・"),
-      scheduleText: days.some((day) => day === null) ? null : days.join("・"),
-      publishedShiftCount: shifts.length,
-      applyAllowedShiftCount: availabilityKnown ? shifts.filter((shift) => shift.applicationAvailability === "allowed" && shift.hasActiveApplication === false).length : null,
-      hourlyWage: wages.length === 1 ? wages[0] ?? null : null,
-    }];
-  });
+  const cards = list?.items ?? [];
 
   function openDetail(nextProjectId: string) {
-    if (projectId !== nextProjectId) setSelection([]);
-    setProjectId(nextProjectId);
+    const normalizedId = normalizeRecruitmentUuid(nextProjectId);
+    if (projectId !== normalizedId) setSelection([]);
+    setProjectId(normalizedId);
     setDisplay("ready");
     setNotice(null);
     setScreen("detail");
@@ -105,24 +99,23 @@ export function RecruitmentDemo({ isDemo }: RecruitmentDemoProps) {
         <p className="text-xs text-foreground-secondary">すべて合成データです。結果は手動の表示例で、Backendによる受付確認ではありません。</p>
         {screen !== "result" && <div className="flex flex-wrap items-center gap-2"><label htmlFor={`${id}-display`} className="text-sm">表示例</label><select id={`${id}-display`} value={display} onChange={(event) => {
           const value = event.currentTarget.value;
-          if (value === "ready" || value === "loading" || value === "empty" || value === "error") setDisplay(value);
-        }} className={control}><option value="ready">通常</option><option value="loading">読み込み中</option><option value="empty">空</option><option value="error">取得エラー</option></select></div>}
+          if (value === "ready" || value === "loading" || value === "empty" || value === "error" || value === "not_found") setDisplay(value);
+        }} className={control}><option value="ready">通常</option><option value="loading">読み込み中</option><option value="empty">空</option><option value="error">取得エラー</option><option value="not_found" disabled={screen !== "detail"}>404：案件を表示できない</option></select></div>}
         {notice && <p role="status" className="text-sm text-warning-foreground">{notice}</p>}
         {unresolved && screen !== "result" && <button type="button" className={control} onClick={() => setScreen("result")}>保持中の模擬結果を再表示</button>}
       </header>
       {screen === "list" ? <>
-        <ProjectRecruitmentList items={display === "empty" ? [] : cards.slice(0, pages.cursor)} source="synthetic"
-          status={display === "empty" ? "ready" : display}
-          dateFilter={{ value: date, dates, onDateChange: (next) => { setDate(next); setPages(firstPage); setNotice(null); } }}
-          onOpenDetail={openDetail} onRetry={() => setDisplay("ready")}
+        <ProjectRecruitmentList items={cards.slice(0, pages.cursor)} source="synthetic"
+          status={listStatus}
+          dateFilter={{ value: date, dates: list?.dates ?? [], onDateChange: (next) => { setDate(next); setPages(firstPage); setNotice(null); } }}
+          onOpenDetail={openDetail} onRetry={() => { setDisplay("ready"); listRead.retry(); }}
           loadMore={{ hasMore: display !== "empty" && pages.cursor < cards.length, pending: false, error: false, onLoadMore: () => setPages((previous) => ({ page: previous.page + 1, cursor: previous.cursor + syntheticDemoPageSize, loadedPages: [...previous.loadedPages, previous.page + 1] })) }} />
         <p className="mx-auto max-w-5xl px-4 pb-4 text-xs text-foreground-muted">デモ内ページ {pages.page + 1}・読み込み済み {pages.loadedPages.length}ページ（正式cursor契約ではありません）</p>
       </> : screen === "detail" ? <>
-        {display === "empty" && <div className="mx-auto mt-5 max-w-3xl px-4"><RecruitmentState state="empty" /></div>}
-        <ProjectRecruitmentDetail key={projectId} detail={display === "empty" && detail ? { ...detail, shifts: [] } : detail}
-          status={display === "empty" ? "ready" : display} selection={selection}
+        <ProjectRecruitmentDetail key={projectId} detail={detail}
+          status={detailStatus} selection={selection}
           onSelectionChange={setSelection} onBack={() => { setScreen("list"); setDisplay("ready"); }}
-          onConfirm={openSheet} onRetry={() => setDisplay("ready")} />
+          onConfirm={openSheet} onRetry={() => { setDisplay("ready"); detailRead.retry(); }} />
       </> : result ? <div className="mx-auto max-w-3xl space-y-4 p-4 sm:p-8">
         <fieldset className="flex flex-wrap gap-2"><legend className="mb-2 text-sm font-semibold">手動の模擬結果切り替え（同じリクエスト）</legend>
           {(["pending", "success", "rejected", "unknown"] as const).map((status) => <button key={status} type="button" aria-pressed={result.status === status} className={control} onClick={() => { setNotice(null); setResult(createSyntheticDemoResult(result.request, status)); }}>{status}</button>)}

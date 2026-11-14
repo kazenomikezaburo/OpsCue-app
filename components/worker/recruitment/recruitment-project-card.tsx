@@ -1,20 +1,12 @@
 "use client";
 
-import type { ProjectRecruitmentSummaryDTO } from "@/lib/worker/recruitment/project-recruitment-types";
+import type { RecruitmentProjectCardItem } from "@/lib/worker/recruitment/project-recruitment-reader";
+export type { RecruitmentProjectCardItem } from "@/lib/worker/recruitment/project-recruitment-reader";
 
 /** UI-only projection supplied by the parent; not an approved Backend DTO.
  * Counts describe the parent's current date/filter scope, not loaded-page sizes.
  * null preserves unavailable information. No totals or eligibility are inferred.
  */
-export type RecruitmentProjectCardItem = {
-  project: ProjectRecruitmentSummaryDTO;
-  venueText: string | null;
-  scheduleText: string | null;
-  publishedShiftCount: number | null;
-  applyAllowedShiftCount: number | null;
-  hourlyWage: number | null;
-};
-
 export type RecruitmentProjectCardProps = {
   item: RecruitmentProjectCardItem;
   source: "synthetic" | "backend-proposal";

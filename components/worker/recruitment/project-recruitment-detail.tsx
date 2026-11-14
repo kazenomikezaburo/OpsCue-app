@@ -9,7 +9,7 @@ import { RecruitmentSelectionBar } from "./recruitment-selection-bar";
 
 export type ProjectRecruitmentDetailProps = {
   detail: ProjectRecruitmentDetailDTO | null;
-  status: "loading" | "ready" | "error";
+  status: "loading" | "ready" | "error" | "not_found";
   selection: RecruitmentSelection;
   onSelectionChange: (selection: RecruitmentSelection) => void;
   onBack: () => void;
@@ -63,10 +63,11 @@ export function ProjectRecruitmentDetail({ detail, status, selection, onSelectio
 
   const buttonClass = "min-h-11 rounded-control px-3 text-sm font-semibold text-link hover:bg-surface-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring";
   return (
-    <section aria-label="案件の募集詳細" className="mx-auto w-full min-w-0 max-w-3xl px-4 py-6 sm:px-8">
+    <section aria-label="案件の募集詳細" aria-busy={status === "loading"} className="mx-auto w-full min-w-0 max-w-3xl px-4 py-6 sm:px-8">
       <button type="button" onClick={onBack} className={buttonClass}>‹ 募集一覧</button>
       <p className="mt-3 rounded-control bg-info-subtle px-3 py-2 text-sm font-semibold text-info-foreground">{detail?.source === "synthetic" ? "デモ用データ・実応募なし" : "UI確認用・実応募なし"}</p>
       {status === "loading" ? <p role="status" className="mt-6 text-sm text-foreground-secondary">案件情報を読み込んでいます…</p>
+        : status === "not_found" ? <div className="mt-6 space-y-3"><h1 className="text-xl font-semibold">404：案件を表示できません</h1><p role="status" className="text-sm text-foreground-secondary">案件が見つからないか、現在表示できません。募集一覧から選び直してください。</p></div>
         : status === "error" || detail === null ? <div role="alert" className="mt-6 space-y-3"><p>案件情報を取得できませんでした。</p>{onRetry && <button type="button" onClick={onRetry} className={buttonClass}>再読み込み</button>}</div>
         : <>
           <header className="mt-4 space-y-3"><h1 className="break-words text-xl font-semibold leading-7 text-foreground">{detail.project.projectName}</h1>{detail.project.description !== null && <p className="whitespace-pre-wrap break-words text-sm text-foreground-secondary">{detail.project.description}</p>}</header>
