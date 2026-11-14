@@ -6,7 +6,7 @@
 --   public.get_own_recruitment_project_shifts(p_project_id, p_limit, p_offset)
 -- The Shift projection of the second function is derived from the effective
 -- definition of public.get_own_recruitment_shifts (20260926173032 plus the
--- 20260926173536 replacements); the only differences are the Project filter,
+-- 20260926173536 and 20260926174808 replacements); the only differences are the Project filter,
 -- the added "projectId" key, and the Project header. Authorization, Branch
 -- boundary and visibility predicates are identical to the existing function.
 
@@ -193,7 +193,7 @@ begin
   )) order by starts_at, id), '[]'::jsonb),
     (select count(*) > v_limit from candidate)
   into v_items, v_has_more
-  from (select * from rendered limit v_limit) r;
+  from (select * from rendered order by starts_at, id limit v_limit) r;
 
   return jsonb_build_object('ok', true, 'project', v_project, 'items', v_items, 'hasMore', v_has_more);
 end;
