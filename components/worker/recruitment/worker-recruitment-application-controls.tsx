@@ -73,6 +73,7 @@ export function WorkerRecruitmentApplicationControls({
   const router = useRouter();
   const requestRef = useRef<ApplicationRequest | null>(null);
   const inFlight = useRef(false);
+  const restoreFocus = useRef(false);
   const [request, setRequest] = useState<ApplicationRequest | null>(null);
   const [result, setResult] = useState(initialState);
   const [pending, startTransition] = useTransition();
@@ -96,6 +97,7 @@ export function WorkerRecruitmentApplicationControls({
       phase: "pending" as const,
     };
     requestRef.current = current;
+    restoreFocus.current = event.currentTarget?.contains(document.activeElement) ?? false;
     inFlight.current = true;
     setRequest(current);
     setResult(initialState);
@@ -129,9 +131,15 @@ export function WorkerRecruitmentApplicationControls({
     });
   }
 
+  function focusAfterSubmit(element: HTMLElement | null) {
+    if (element && restoreFocus.current && !pending && document.activeElement === document.body) {
+      element.focus({ preventScroll: true });
+    }
+  }
+
   if (!request && !canStart) {
     return result.message ? (
-      <p className={`mt-3 text-sm ${result.ok ? "text-emerald-700" : "text-red-700"}`} role={result.ok ? "status" : "alert"}>
+      <p ref={focusAfterSubmit} tabIndex={-1} className={`mt-3 text-sm ${result.ok ? "text-emerald-700" : "text-red-700"}`} role={result.ok ? "status" : "alert"}>
         {result.message}
       </p>
     ) : null;
@@ -140,6 +148,7 @@ export function WorkerRecruitmentApplicationControls({
   return (
     <form onSubmit={submit} aria-busy={pending} className="mt-5">
       <button
+        ref={focusAfterSubmit}
         type="submit"
         disabled={pending || differentShift}
         className={withdrawing
