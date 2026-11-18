@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import {
   PROJECT_PAGE_SIZE,
   PROJECT_SHIFT_PAGE_SIZE,
+  isJstDateString,
   isUuid,
   parseProjectDetail,
   parseProjectList,
@@ -15,11 +16,15 @@ import {
  * Project list for the signed-in Worker. A transport/RPC failure throws (retrieval failure);
  * an unauthenticated, unlinked or out-of-scope caller receives an empty list by design.
  */
-export async function getWorkerRecruitmentProjects(page = 0): Promise<RecruitmentProjectList> {
+export type RecruitmentDateOption = { /** JST calendar day "YYYY-MM-DD"; omit for no date filter. */ date?: string };
+
+export async function getWorkerRecruitmentProjects(page = 0, options: RecruitmentDateOption = {}): Promise<RecruitmentProjectList> {
+  if (options.date !== undefined && !isJstDateString(options.date)) throw new RangeError("invalid recruitment date filter (expected a real YYYY-MM-DD)");
   const supabase = await createClient();
   const { data, error } = await supabase.rpc("get_own_recruitment_projects", {
     p_limit: PROJECT_PAGE_SIZE,
     p_offset: Math.max(0, page) * PROJECT_PAGE_SIZE,
+    ...(options.date ? { p_date: options.date } : {}),
   });
   if (error) throw error;
   return parseProjectList(data);
@@ -29,13 +34,15 @@ export async function getWorkerRecruitmentProjects(page = 0): Promise<Recruitmen
  * Shifts of one Project. A malformed id is rejected locally (`invalid_request`) without an RPC call.
  * A Project the Worker cannot see (other Branch, closed, nonexistent) is `project: null` with no items.
  */
-export async function getWorkerRecruitmentProjectShifts(projectId: string, page = 0): Promise<RecruitmentProjectDetail> {
+export async function getWorkerRecruitmentProjectShifts(projectId: string, page = 0, options: RecruitmentDateOption = {}): Promise<RecruitmentProjectDetail> {
   if (!isUuid(projectId)) return { ok: false, outcome: "invalid_request", project: null, items: [], hasMore: false };
+  if (options.date !== undefined && !isJstDateString(options.date)) throw new RangeError("invalid recruitment date filter (expected a real YYYY-MM-DD)");
   const supabase = await createClient();
   const { data, error } = await supabase.rpc("get_own_recruitment_project_shifts", {
     p_project_id: projectId,
     p_limit: PROJECT_SHIFT_PAGE_SIZE,
     p_offset: Math.max(0, page) * PROJECT_SHIFT_PAGE_SIZE,
+    ...(options.date ? { p_date: options.date } : {}),
   });
   if (error) throw error;
   return parseProjectDetail(data);
