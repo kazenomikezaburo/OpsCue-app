@@ -171,3 +171,70 @@ jobs:
             exit 1
           fi
           printf 'Offline safety gate: **PASS**. The test job executed and validated 173/173 PASS.\n' >> "$GITHUB_STEP_SUMMARY"
+
+  task-b-offline-tests:
+    name: Task B offline tests / Node 22.23.3
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout PR merge commit
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+          fetch-depth: 1
+      - name: Set up Node 22.23.3 without dependency caching
+        uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6.0.0
+        with:
+          node-version: '22.23.3'
+          check-latest: false
+          package-manager-cache: false
+      - name: Install locked dependencies without lifecycle scripts
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(node --version)" = v22.23.3
+          npm ci --ignore-scripts --no-audit --no-fund
+      - name: Run nine Task B files and validate the Node TAP summary
+        shell: bash
+        run: |
+          set -euo pipefail
+          files=(
+            scripts/worker-recruitment/recruitment-batch-mock-contract.test.ts
+            scripts/worker-recruitment/backend-project-recruitment-adapter.test.ts
+            scripts/worker-recruitment/recruitment-selection.test.ts
+            scripts/worker-recruitment/pr-a-controls.test.mjs
+            scripts/worker-recruitment/shift-views.test.mjs
+            scripts/worker-recruitment/project-views.test.ts
+            scripts/worker-recruitment/project-recruitment-reader.test.ts
+            scripts/worker-recruitment/project-read-lifecycle.test.mjs
+            scripts/worker-recruitment/project-demo-flow.test.mjs
+          )
+          report="$(mktemp "$RUNNER_TEMP/task-b.XXXXXX.tap")"
+          diagnostics="$(mktemp "$RUNNER_TEMP/task-b.XXXXXX.stderr")"
+          # Preserve the process exit code and keep raw TAP out of workflow commands.
+          status=0
+          env -i HOME="$HOME" PATH="$PATH" TMPDIR="$RUNNER_TEMP" \
+            node --import tsx --test --test-reporter=tap "${files[@]}" > "$report" 2> "$diagnostics" || status=$?
+          token="$(cat /proc/sys/kernel/random/uuid)"
+          printf '::stop-commands::%s\n' "$token"
+          cat "$report" "$diagnostics"
+          printf '\n::%s::\n' "$token"
+          if (( status != 0 )); then exit "$status"; fi
+          python3 -I - "$report" <<'PY'
+          from pathlib import Path
+          import re
+          import sys
+
+          lines = Path(sys.argv[1]).read_text(encoding="utf-8").splitlines()
+          # The plan counts top-level tests. Node's footer already includes nested tests.
+          expected = [
+              "# tests 215", "# suites 0", "# pass 215", "# fail 0",
+              "# cancelled 0", "# skipped 0", "# todo 0",
+          ]
+          if (len(lines) < 10 or lines[0] != "TAP version 13"
+                  or not re.fullmatch(r"1\.\.[1-9]\d*", lines[-9])
+                  or lines[-8:-1] != expected
+                  or not re.fullmatch(r"# duration_ms \d+(?:\.\d+)?", lines[-1])):
+              sys.exit("Incomplete or unexpected Task B TAP summary")
+          PY
+          echo 'Task B: **215/215 PASS**; fail/cancelled/skipped/todo 0.' >> "$GITHUB_STEP_SUMMARY"
