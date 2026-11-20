@@ -16,7 +16,7 @@
 | --- | --- | --- | --- |
 | #18 | merged | Worker single-application unknown/idempotency handling | https://github.com/kazenomikezaburo/OpsCue-app/pull/18 |
 | #19 | merged | Project recruitment UI + synthetic Demo; browser validation was reported | https://github.com/kazenomikezaburo/OpsCue-app/pull/19 |
-| #20 | merged (as referenced by FE-2 handoff; PR state not independently checked in this bootstrap) | Backend project recruitment reader contract | `docs/phase-4-fe-2-backend-adapter-handoff.md` |
+| #20 | merged (confirmed in post-bootstrap review) | Backend project recruitment reader contract | [PR #20](https://github.com/kazenomikezaburo/OpsCue-app/pull/20), merge `3aec0ba3229f09e0fc81f22e057e7a8b57e57aad` |
 | #21 | merged | Backend DTO adapter + mock contract tests; no live route wiring | https://github.com/kazenomikezaburo/OpsCue-app/pull/21 |
 | #23 | merged (verified through merge commit) | Phase 4 Task A date filter/availableShiftCount changes; DB migration execution not established | https://github.com/kazenomikezaburo/OpsCue-app/commit/326f0abbfc910d3d6242f649c2bc031d218a021d |
 | #24 | merged | Task B B-01–B-15 frontend memory-only mock contract | https://github.com/kazenomikezaburo/OpsCue-app/pull/24 |
@@ -30,6 +30,17 @@
 - Real browser/device, DB, Auth, RLS, LINE, AWS, migration apply, deploy, and production behavior were **not verified in this bootstrap**.
 - `docs/ai-context/` did not exist at the initial main snapshot; this PR introduces it.
 
+### Post-bootstrap verification (VERIFIED_GITHUB)
+
+The bootstrap observations above record what was known at creation. Independent review checked the job logs. Rechecked on 2026-11-20 at 16:00 JST:
+
+| PR and reviewed head | Workflow evidence | Safety suite | Task B | Safety gate |
+| --- | --- | --- | --- | --- |
+| #25 `9214116c9b8cde5eb198dc2da88b044fe2200c35` | [Run #54](https://github.com/kazenomikezaburo/OpsCue-app/actions/runs/44586522137) | 173/173 PASS | 215/215 PASS | success |
+| #26 before review fixes `39fcecd5066f7be8c54cf760b098d96fcc4afdad` | [Run #55](https://github.com/kazenomikezaburo/OpsCue-app/actions/runs/44691094980) | 173/173 PASS | 215/215 PASS | success |
+
+Both suites reported zero failed, cancelled, skipped and TODO tests in each run. Task B's TAP footer includes nested tests in the 215 total. Verify the run for each new PR head.
+
 ## Persistent blockers / caveats
 
 - Task B formal RPC/wire, including error/authorization/unavailable/replayed semantics: **BLOCKED** pending authoritative contract.
@@ -41,6 +52,7 @@
 
 ## Source index
 
+- [Master Specification v1.3](https://github.com/kazenomikezaburo/OpsCue-app/blob/8f85f9ab8bf2a6ef2f0c01c3f635aec4a224e38b/docs/ui_仕様書/OpsCue_Master_Specification_v1.3_2026-10-23.md) (product and engineering reference at the bootstrap base).
 - `docs/phase-4-task-b-frontend-mock-contract-handoff.md`
 - `docs/phase-4-fe-2-backend-adapter-handoff.md`
 - `docs/phase-4-fe-project-ui-handoff.md`
@@ -50,7 +62,7 @@
 ## Next steps (proposal, not approval)
 
 1. Review and merge this **documentation-only** bootstrap PR after explicit PM decision.
-2. Validate full job-level CI results and reconcile any discrepancy with reports.
+2. Verify job-level CI for the current PR head before a merge decision.
 3. Recover unavailable PM decisions/primary contract attachments from exported chat as supplemental evidence; never manufacture authorization.
 4. Maintain `TASKS.md` at task close and refresh this snapshot by checking main SHA.
 

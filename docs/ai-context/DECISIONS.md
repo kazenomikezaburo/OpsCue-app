@@ -31,7 +31,7 @@
 
 ## Historical decision recovery queue
 
-- OpsCue Master Specification v1.1 and later authorized revisions: locate primary approved artifact, exact version and approval record.
+- The [Master Specification v1.3](https://github.com/kazenomikezaburo/OpsCue-app/blob/8f85f9ab8bf2a6ef2f0c01c3f635aec4a224e38b/docs/ui_仕様書/OpsCue_Master_Specification_v1.3_2026-10-23.md) text is available at the bootstrap base and preserves v1.2 with later amendments. For historical v1.1 and subsequent approval claims, recover the original PM record with approver, date, version and scope before registering an approved decision. Availability of the specification grants no new execution authority.
 - Phase 4 Task B receipt-first and B-01–B-15 PM supplemental ruling: locate original text and verify scope before marking APPROVED.
 - Any historical provider/DB/migration execution approvals: do not infer from previous test runs or a summary. Record only after primary evidence is recovered.
 

@@ -5,11 +5,12 @@
 | ID | Task | Status | Evidence / next gate |
 | --- | --- | --- | --- |
 | DOC-001 | Establish five AI context documents | IN_PROGRESS (this Draft PR) | Review doc correctness; PM merge decision required |
+| PR-011 | Worker pre-shift confirmation and home Next Action | OPEN; close/merge undecided | [PR #11](https://github.com/kazenomikezaburo/OpsCue-app/pull/11), head `1a1a9af2e0eff190cbc8b9180a227ba76f2cf614`. Compare its four-file diff with current main and review CI before PM disposition. The PR reports an outstanding TypeScript check and a separate, out-of-scope direct INSERT permission/RLS mismatch for pre-shift confirmation. |
 | FE-UI | Phase 4 project recruitment UI / synthetic Demo | MERGED, live wiring NOT verified | PR #19; `docs/phase-4-fe-project-ui-handoff.md` |
 | FE-2 | Backend project recruitment DTO adapter / offline mock | MERGED, live wiring BLOCKED | PR #21; `docs/phase-4-fe-2-backend-adapter-handoff.md` |
 | BE-A | Phase 4 Task A date filter / availableShiftCount | MERGED CODE; DB apply UNVERIFIED | PR #23; approved isolated DB/RLS proof required |
 | FE-B | Phase 4 Task B B-01–B-15 memory-only mock | MERGED; official wire BLOCKED | PR #24; `docs/phase-4-task-b-frontend-mock-contract-handoff.md` |
-| CI-B | Add dedicated Task B 215-case offline CI | MERGED; workflow success observed, job-level counts UNVERIFIED | PR #25; workflow run 44586522137 |
+| CI-B | Add dedicated Task B 215-case offline CI | MERGED; job logs verified after bootstrap | [PR #25 run #54](https://github.com/kazenomikezaburo/OpsCue-app/actions/runs/44586522137); 173/173 and 215/215 PASS. See CURRENT_STATE for verification time. |
 | BE-B-WIRE | Confirm batch apply / receipt wire, replayed, unavailable, auth/exception cases | BLOCKED | Authoritative final Backend contract and explicit PM review |
 | BE-U2 | Receipt retention/anonymization/deletion/replay window | BLOCKED | Primary U-2 decision and testable contract |
 | BE-DB | Batch atomicity/concurrency/duplicate-prevention validation | BLOCKED | Explicitly approved isolated environment and controls |
